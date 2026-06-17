@@ -1,5 +1,7 @@
 name: Vérification qualité du code
 
+#test
+
 on:
   push:
     branches:
@@ -30,6 +32,6 @@ jobs:
 
       - name: Vérification formatage
         run: cargo fmt --all --check
-        
+
       - name: Vérification Clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
