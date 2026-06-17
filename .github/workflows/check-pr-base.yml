@@ -17,12 +17,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Vérifie que la base de la PR est le fork et non l'upstream
+        env:
+          EXPECTED_REPO: "ArthurMillet44/simeis"
         run: |
           # Nom complet (owner/repo) du dépôt vers lequel la PR essaie de merger
           BASE_REPO="${{ github.event.pull_request.base.repo.full_name }}"
 
           # Dépôt attendu : le fork "ArthurMillet44/simeis"
-          EXPECTED_REPO: "ArthurMillet44/simeis"
+          EXPECTED_REPO="ArthurMillet44/simeis"
 
           if [ "$BASE_REPO" != "$EXPECTED_REPO" ]; then
             echo "::error::Cette pull request cible '$BASE_REPO' au lieu de '$EXPECTED_REPO'. Merci de corriger la base de la PR pour qu'elle pointe vers ce fork."
