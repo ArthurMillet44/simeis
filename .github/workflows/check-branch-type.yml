@@ -1,0 +1,83 @@
+# Ce workflow vérifie qu'une pull request respecte les règles de merge
+# selon le type de la branche cible.
+#
+# Règles appliquées:
+#
+#   Branche cible      ->  Branches source autorisées
+#   ------------------------------------------------------------
+#   main                -> feature/*, bug/*, docs/*
+#   feature/*           -> feature/*, bug/*, docs/*
+#   bug/*                -> bug/* uniquement
+#   release/*           -> bug/* uniquement
+#   docs/*              -> docs/* uniquement
+
+name: Check PR branch type
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  check-branch-type:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Vérifie le type de la branche source selon le type de la branche cible
+        env:
+          HEAD_REF: "${{ github.head_ref }}"
+          BASE_REF: "${{ github.base_ref }}"
+        run: |
+
+          # Préfixe avant le premier "/". Pour "main" (sans "/"), le préfixe reste "main".
+          HEAD_TYPE="${HEAD_REF%%/*}"
+          BASE_TYPE="${BASE_REF%%/*}"
+
+          # Selon le type de la branche cible, on applique la liste des types de branche autorisés.
+          case "$BASE_TYPE" in
+            main|feature)
+              case "$HEAD_TYPE" in
+                feature|bug|docs)
+                  echo "OK : '$HEAD_REF' est autorisée à être mergée dans '$BASE_REF'."
+                  ;;
+                *)
+                  echo "::error::La branche '$HEAD_REF' (type '$HEAD_TYPE') ne peut pas être mergée dans '$BASE_REF'. Seules les branches feature/*, bug/* ou docs/* sont autorisées vers main ou feature/*."
+                  exit 1
+                  ;;
+              esac
+              ;;
+            release)
+              case "$HEAD_TYPE" in
+                bug)
+                  echo "OK : '$HEAD_REF' est autorisée à être mergée dans '$BASE_REF'."
+                  ;;
+                *)
+                  echo "::error::La branche '$HEAD_REF' (type '$HEAD_TYPE') ne peut pas être mergée dans '$BASE_REF'. Seules les branches bug/* sont autorisées vers release/*."
+                  exit 1
+                  ;;
+              esac
+              ;;
+            bug)
+              case "$HEAD_TYPE" in
+                bug)
+                  echo "OK : '$HEAD_REF' est autorisée à être mergée dans '$BASE_REF'."
+                  ;;
+                *)
+                  echo "::error::La branche '$HEAD_REF' (type '$HEAD_TYPE') ne peut pas être mergée dans '$BASE_REF'. Seules les branches bug/* sont autorisées vers bug/*."
+                  exit 1
+                  ;;
+              esac
+              ;;
+            docs)
+              case "$HEAD_TYPE" in
+                docs)
+                  echo "OK : '$HEAD_REF' est autorisée à être mergée dans '$BASE_REF'."
+                  ;;
+                *)
+                  echo "::error::La branche '$HEAD_REF' (type '$HEAD_TYPE') ne peut pas être mergée dans '$BASE_REF'. Seules les branches docs/* sont autorisées vers docs/*."
+                  exit 1
+                  ;;
+              esac
+              ;;
+            *)
+              echo "Type de branche cible '$BASE_TYPE' non reconnu, aucune vérification appliquée."
+              ;;
+          esac

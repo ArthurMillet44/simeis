@@ -12,6 +12,10 @@ Jeu par API
 
 La branche `main` est protégée. Voir [.github/README.md](.github/README.md) pour le détail de la configuration et la commande utilisée.
 
+Convention de nommage des branches
+
+Le développement suit une convention de branches (`feature/*`, `bug/*`, `release/*`, `docs/*`), avec des règles précises sur quel type de branche peut être mergé dans quel autre. Cette convention est vérifiée automatiquement par le workflow `check-branch-type.yml`. Voir [.github/README.md](.github/README.md) pour le détail des règles appliquées.
+
 ## Worflows
 
 Les différents workflows de ci sont expliqués dans le fichier [.github/workflows/README.md](.github/workflows/README.md).
