@@ -3,15 +3,13 @@ name: Vérification qualité du code
 on:
   push:
     branches:
-      
-main
-feature/
-  
-bug/
-release/**
-pull_request:
-  branches:
-main
+      main
+      feature/**
+      bug/**
+      release/**
+  pull_request:
+    branches:
+      main
 
 jobs:
   quality:
