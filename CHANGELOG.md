@@ -36,3 +36,6 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 - Installation automatique de Typst pour la compilation du manuel
 - Intégration de cargo clippy pour les vérifications statiques
 - Support Windows détecté dans le Makefile (pas de strip sur Windows)
+
+### Test
+- Ajout de 3 tests fonctionnel sur l'achat de vaisseaux et d'upgrade 
