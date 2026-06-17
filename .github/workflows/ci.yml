@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  checks:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Typst
+        run: |
+          wget https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz
+          tar -xf typst-x86_64-unknown-linux-musl.tar.xz
+          sudo mv typst*/typst /usr/local/bin/
+
+      - name: Check
+        run: make check
+
+      - name: Test
+        run: make test
+
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Typst
+        run: |
+          wget https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz
+          tar -xf typst-x86_64-unknown-linux-musl.tar.xz
+          sudo mv typst*/typst /usr/local/bin/
+
+      - name: Build release
+        run: make release
+
+      - name: Build manual
+        run: make manual
