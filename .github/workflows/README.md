@@ -18,3 +18,8 @@ Les règles appliquées sont les suivantes :
 | `docs/*` | `docs/*` uniquement |
 
 Concrètement, le workflow extrait le préfixe (la partie avant le premier `/`) du nom de la branche source et de la branche cible de la pull request, puis compare cette combinaison à la table ci-dessus. Si la combinaison n'est pas autorisée, le check échoue.
+
+## Pipeline CI/CD (ci.yml)
+
+Le fichier `.github/workflows/ci.yml` configure un pipeline d'intégration continue et de déploiement qui s'exécute automatiquement sur les pull requests et les push vers la branche `main`. Il effectue des vérifications de qualité (check, clippy, tests), compile le projet, et génère le manuel. Lors d'un push sur `main`, il déclenche également une release optimisée.
+
