@@ -1,0 +1,42 @@
+name: Vérification qualité du code
+
+on:
+  push:
+    branches:
+      
+main
+feature/
+  
+bug/
+release/**
+pull_request:
+  branches:
+main
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
+
+    steps:
+      
+name: Checkout du code
+      uses: actions/checkout@v4
+
+      
+name: Installation de Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: rustfmt, clippy
+
+      
+name: Vérification compilation
+      run: cargo check
+
+      
+name: Vérification formatage
+      run: cargo fmt --all --check
+
+      
+name: Vérification Clippy
+      run: cargo clippy --all-targets --all-features -- -D warnings
