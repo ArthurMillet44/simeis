@@ -7,3 +7,7 @@ Jeu par API
 - Mathéo SOUCHET
 - Bryan METRO
 - Maxime KINIFFO
+
+## Protection de la branche `main`
+
+La branche `main` est protégée. Voir [.github/README.md](.github/README.md) pour le détail de la configuration et la commande utilisée.
