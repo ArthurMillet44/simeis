@@ -31,8 +31,11 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
-      - name: Cache Cargo dependencies
+      - name: Cache des dépendances Rust
         uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          shared-key: "simeis-deps"
       - name: Check code quality
         run: cargo clippy --workspace --all-targets -- -D warnings
   
@@ -43,8 +46,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
-      - name: Cache Cargo dependencies
+      - name: Cache des dépendances Rust
         uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          shared-key: "simeis-deps"
       - name: Run tests
         run: cargo test
   
@@ -55,8 +61,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
-      - name: Cache Cargo dependencies
+      - name: Cache des dépendances Rust
         uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          shared-key: "simeis-deps"
       - name: Build
         run: cargo build --release
   
@@ -67,7 +76,10 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
-      - name: Cache Cargo dependencies
+      - name: Cache des dépendances Rust
         uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          shared-key: "simeis-deps"
       - name: Check
         run: cargo check --workspace
