@@ -23,6 +23,7 @@ jobs:
         run: cargo fmt --check
   
   clippy:
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -40,6 +41,7 @@ jobs:
         run: cargo clippy --workspace --all-targets -- -D warnings
   
   tests:
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -55,6 +57,7 @@ jobs:
         run: cargo test
   
   build:
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
