@@ -24,8 +24,11 @@ jobs:
       - name: Install Python dependencies
         run: pip install pytest requests
 
+      - name: Build the server
+        run: cargo build -p simeis-server
+
       - name: Start the server
-        run: cargo run -p simeis-server &
+        run: nohup cargo run -p simeis-server > server.log 2>&1 &
 
       - name: Wait for the server to be ready
         run: |
@@ -35,7 +38,8 @@ jobs:
             fi
             sleep 1
           done
-          echo "Server did not start in time"
+          echo "Server did not start in time, server logs:"
+          cat server.log
           exit 1
 
       - name: Run functional tests
