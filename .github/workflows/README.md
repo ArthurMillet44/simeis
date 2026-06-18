@@ -48,3 +48,7 @@ Il effectue trois vérifications :
 3. **`cargo clippy --all-targets -- -D warnings`** : lance Clippy, le linter de Rust, qui détecte les mauvais schémas de code.
 
 Si l'une de ces trois étapes échoue, le workflow entier est en échec.
+
+# Formatage des tests python
+
+Le fichier `.github/workflows/check-code-quality.yaml` vérifie le formatage des scripts Python présents dans `tests/` via la commande `black --check tests/`. Black contrôle que le code respecte son style de formatage standard (longueur de ligne, lignes vides entre fonctions...). Si un fichier n'est pas conforme, le workflow échoue.
