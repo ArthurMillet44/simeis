@@ -14,17 +14,14 @@
 name: Check PR branch type
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, edited, reopened, synchronize]
 
 jobs:
   check-branch-type:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
       - name: Vérifie le type de la branche source selon le type de la branche cible
-        id: check
         env:
           HEAD_REF: "${{ github.head_ref }}"
           BASE_REF: "${{ github.base_ref }}"
@@ -34,13 +31,6 @@ jobs:
           HEAD_TYPE="${HEAD_REF%%/*}"
           BASE_TYPE="${BASE_REF%%/*}"
 
-          # Marque la PR à fermer, affiche l'erreur et échoue.
-          reject() {
-            echo "should_close=true" >> $GITHUB_OUTPUT
-            echo "::error::$1"
-            exit 1
-          }
-
           # Selon le type de la branche cible, on applique la liste des types de branche autorisés.
           case "$BASE_TYPE" in
             main|feature)
@@ -49,7 +39,8 @@ jobs:
                   echo "OK : '$HEAD_REF' est autorisée à être mergée dans '$BASE_REF'."
                   ;;
                 *)
-                  reject "La branche '$HEAD_REF' (type '$HEAD_TYPE') ne peut pas être mergée dans '$BASE_REF'. Seules les branches feature/*, bug/* ou docs/* sont autorisées vers main ou feature/*."
+                  echo "::error::La branche '$HEAD_REF' (type '$HEAD_TYPE') ne peut pas être mergée dans '$BASE_REF'. Seules les branches feature/*, bug/* ou docs/* sont autorisées vers main ou feature/*."
+                  exit 1
                   ;;
               esac
               ;;
@@ -59,7 +50,8 @@ jobs:
                   echo "OK : '$HEAD_REF' est autorisée à être mergée dans '$BASE_REF'."
                   ;;
                 *)
-                  reject "La branche '$HEAD_REF' (type '$HEAD_TYPE') ne peut pas être mergée dans '$BASE_REF'. Seules les branches bug/* sont autorisées vers release/*."
+                  echo "::error::La branche '$HEAD_REF' (type '$HEAD_TYPE') ne peut pas être mergée dans '$BASE_REF'. Seules les branches bug/* sont autorisées vers release/*."
+                  exit 1
                   ;;
               esac
               ;;
@@ -69,7 +61,8 @@ jobs:
                   echo "OK : '$HEAD_REF' est autorisée à être mergée dans '$BASE_REF'."
                   ;;
                 *)
-                  reject "La branche '$HEAD_REF' (type '$HEAD_TYPE') ne peut pas être mergée dans '$BASE_REF'. Seules les branches bug/* sont autorisées vers bug/*."
+                  echo "::error::La branche '$HEAD_REF' (type '$HEAD_TYPE') ne peut pas être mergée dans '$BASE_REF'. Seules les branches bug/* sont autorisées vers bug/*."
+                  exit 1
                   ;;
               esac
               ;;
@@ -79,7 +72,8 @@ jobs:
                   echo "OK : '$HEAD_REF' est autorisée à être mergée dans '$BASE_REF'."
                   ;;
                 *)
-                  reject "La branche '$HEAD_REF' (type '$HEAD_TYPE') ne peut pas être mergée dans '$BASE_REF'. Seules les branches docs/* sont autorisées vers docs/*."
+                  echo "::error::La branche '$HEAD_REF' (type '$HEAD_TYPE') ne peut pas être mergée dans '$BASE_REF'. Seules les branches docs/* sont autorisées vers docs/*."
+                  exit 1
                   ;;
               esac
               ;;
@@ -87,9 +81,3 @@ jobs:
               echo "Type de branche cible '$BASE_TYPE' non reconnu, aucune vérification appliquée."
               ;;
           esac
-
-      - name: Ferme la PR si le type de branche n'est pas autorisé
-        if: failure() && steps.check.outputs.should_close == 'true'
-        uses: superbrothers/close-pull-request@v3
-        with:
-          comment: "Cette pull request a été fermée automatiquement car la branche source ne respecte pas les règles de nommage de ce projet."
