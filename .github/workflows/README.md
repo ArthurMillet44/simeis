@@ -23,3 +23,14 @@ Concrètement, le workflow extrait le préfixe (la partie avant le premier `/`) 
 
 Le fichier `.github/workflows/ci.yml` configure un pipeline d'intégration continue et de déploiement qui s'exécute automatiquement sur les pull requests et les push vers la branche `main`. Il effectue des vérifications de qualité (check, clippy, tests), compile le projet, et génère le manuel. Lors d'un push sur `main`, il déclenche également une release optimisée.
 
+## Lancement des tests fonctionnels (`run-functional-test.yml`)
+
+Le fichier `.github/workflows/run-functional-test.yml` exécute les tests fonctionnels du projet à chaque ouverture, modification ou mise à jour d'une pull request.
+
+Le workflow effectue les étapes suivantes :
+
+1. Installation de la toolchain Rust et des dépendances Python (`pytest`, `requests`).
+2. Compilation du serveur (`cargo build -p simeis-server`).
+3. Démarrage du serveur en arrière-plan (`cargo run -p simeis-server`), avec ses logs redirigés vers `server.log`.
+4. Attente de la disponibilité du serveur, en interrogeant l'endpoint `http://localhost:8080/gamestats` jusqu'à 30 fois (1 seconde d'intervalle). Si le serveur n'est pas prêt après ce délai, le job échoue et affiche le contenu de `server.log` pour faciliter le diagnostic.
+5. Exécution des tests fonctionnels avec `pytest tests/test_functional.py`, qui viennent valider le comportement du serveur via des requêtes HTTP.

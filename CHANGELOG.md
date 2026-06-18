@@ -39,3 +39,4 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 
 ### Test
 - Ajout de 3 tests fonctionnel sur l'achat de vaisseaux et d'upgrade 
+- Ajout d'un workflow pour le lancement des tests fonctionnels
