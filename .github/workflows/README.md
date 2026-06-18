@@ -36,6 +36,13 @@ Le workflow sépare les vérifications Rust en plusieurs jobs indépendants afin
 5. **`build`** : vérifie que le projet compile en mode release avec `cargo build --release`.
 
 Cette séparation permet d'obtenir un retour plus clair et plus rapide : une erreur de formatage, de lint, de test ou de build apparaît dans un job dédié, sans attendre l'exécution séquentielle de toutes les commandes dans un seul job.
+## Mise à jour automatique des dépendances (`dependencies.yml`)
+
+Le fichier `.github/workflows/dependencies.yml` exécute une mise à jour automatique des dépendances Rust chaque semaine. Il :
+
+1. s'exécute sur une planification hebdomadaire et peut être lancé manuellement via `workflow_dispatch` ;
+2. installe `cargo-update` et lance `cargo upgrade` pour mettre à jour `Cargo.toml` et `Cargo.lock` ;
+3. vérifie s'il y a eu des modifications et, si oui, crée automatiquement une pull request avec les changements de dépendances.
 
 ## Lancement des tests fonctionnels (`run-functional-test.yml`)
 
