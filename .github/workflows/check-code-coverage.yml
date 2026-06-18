@@ -26,6 +26,7 @@ jobs:
           tool: cargo-tarpaulin
 
       - name: Run cargo-tarpaulin
+        id: tarpaulin
         run: |
           cargo tarpaulin --workspace --out Stdout | tee tarpaulin-output.txt
           COVERAGE=$(grep -oP '\d+\.\d+(?=% coverage)' tarpaulin-output.txt | tail -1)
@@ -33,6 +34,7 @@ jobs:
           echo "coverage=$COVERAGE" >> "$GITHUB_OUTPUT"
 
       - name: Check coverage threshold
+        id: check
         run: |
           BELOW=$(awk -v c="${{ steps.tarpaulin.outputs.coverage }}" 'BEGIN { print (c < 50) ? "true" : "false" }')
           echo "below_threshold=$BELOW" >> "$GITHUB_OUTPUT"
