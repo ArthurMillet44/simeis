@@ -58,17 +58,24 @@ jobs:
   
   build:
     needs: check
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        rust: [stable]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
       - name: Cache des dépendances Rust
         uses: Swatinem/rust-cache@v2
         with:
           cache-on-failure: true
-          shared-key: "simeis-deps"
+          shared-key: "simeis-${{ matrix.os }}-${{ matrix.rust }}"
       - name: Build
         run: cargo build --release
   
