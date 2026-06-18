@@ -8,6 +8,7 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 - **Workflow qualité de code** (`.github/workflows/check-code-quality.yml`)
   - Le workflow se déclenche désormais sur toutes les pull requests, quelle que soit la branche cible (auparavant limité aux PRs vers `main`)
   - Ajout d'un cache des dépendances Rust via `Swatinem/rust-cache@v2` pour accélérer les builds suivants
+- Ajout d'un cache partagé entre les pull requests
 
 ### Added
 - **Workflows de dépendances**
@@ -15,9 +16,14 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 - **CODEOWNERS**
   - Ajout d'un fichier `.github/CODEOWNERS` pour assigner automatiquement les propriétaires de répertoire à la revue des changements.
 
+- **Templates de PR et d'issues** (`.github/templates/`)
+  - Ajout de templates standardisés pour les pull requests (`pull_request_template.md`) et les issues (`issue_template.md`) pour harmoniser les contributions.
+
 - **CI Rust parallèle** (`.github/workflows/rust-ci.yml`)
   - Ajout d'un workflow Rust dédié aux vérifications de formatage, compilation, lint, tests et build release.
   - Séparation des vérifications en jobs indépendants pour permettre leur exécution en parallèle.
+  - **Optimisation du cache** : Intégration de `Swatinem/rust-cache@v2` dans tous les jobs pour mettre en cache les dépendances Cargo et les artifacts de compilation, réduisant significativement les temps de build.
+  - **Optimisation de la parallélisation** : Ajout de dépendances `needs` entre les jobs pour un arrêt rapide (fail-fast). Les jobs `clippy`, `tests` et `build` dépendent maintenant du job `check`, évitant ainsi de lancer des tâches coûteuses si le code ne compile pas.
 
 - **Workflow de couverture de test**
   - Ajout d'un workflow `.github/workflows/check-code-coverage.yml` pour permettre de vérifier la couverture de test et de signaler si elle est inférieur à 50%.

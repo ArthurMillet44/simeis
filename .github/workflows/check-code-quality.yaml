@@ -39,6 +39,9 @@ jobs:
       # Met en cache les dépendances Rust pour accélérer les builds suivants.
       - name: Cache des dépendances Rust
         uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          shared-key: "simeis-deps"
 
       # Vérifie que le code compile correctement.
       - name: cargo check

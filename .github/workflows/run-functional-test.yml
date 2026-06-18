@@ -16,6 +16,9 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
 
       - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          shared-key: "simeis-deps"
 
       - uses: actions/setup-python@v5
         with:
