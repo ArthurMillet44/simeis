@@ -1,0 +1,50 @@
+name: Create or update release on release/*
+
+on:
+  pull_request:
+    branches:
+      - release/*
+    types:
+      - closed
+
+jobs:
+  main:
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.base.ref, 'release/')
+    name: Create/Update Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version
+        run: |
+          VERSION=${GITHUB_BASE_REF#release/}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build release artifacts
+        run: |
+          make release
+          make manual
+
+      - name: Create or update GitHub Release
+        uses: github/create-update-github-release@v2
+        with:
+          tag: ${{ env.VERSION }}
+          name: "Release ${{ env.VERSION }}"
+          body: "Release for branch release/${{ env.VERSION }}"
+          draft: false
+          prerelease: false
+          files: |
+            target/release/simeis
+            dist/*.deb
+            doc/manual.pdf
+            doc/swagger.json
+            doc/swagger-ui.html
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
