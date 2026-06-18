@@ -61,7 +61,7 @@ Le workflow effectue les étapes suivantes :
 Ce workflow vérifie la qualité du code Rust du projet. Il se déclenche :
 
 - à chaque `push`, sur n'importe quelle branche
-- à chaque pull request dont la cible est `main`.
+- à chaque pull request peu importe la branche.
 
 Il effectue trois vérifications :
 
