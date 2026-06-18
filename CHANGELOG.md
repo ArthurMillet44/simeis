@@ -19,6 +19,7 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 - **CI Rust parallèle** (`.github/workflows/rust-ci.yml`)
   - Ajout d'un workflow Rust dédié aux vérifications de formatage, compilation, lint, tests et build release.
   - Séparation des vérifications en jobs indépendants pour permettre leur exécution en parallèle.
+  - **Optimisation du cache** : Intégration de `Swatinem/rust-cache@v2` dans tous les jobs pour mettre en cache les dépendances Cargo et les artifacts de compilation, réduisant significativement les temps de build.
 
 - **Workflow de couverture de test**
   - Ajout d'un workflow `.github/workflows/check-code-coverage.yml` pour permettre de vérifier la couverture de test et de signaler si elle est inférieur à 50%.
