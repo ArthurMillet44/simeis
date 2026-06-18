@@ -36,6 +36,8 @@ Le workflow sépare les vérifications Rust en plusieurs jobs indépendants afin
 5. **`build`** : vérifie que le projet compile en mode release avec `cargo build --release`.
 
 Cette séparation permet d'obtenir un retour plus clair et plus rapide : une erreur de formatage, de lint, de test ou de build apparaît dans un job dédié, sans attendre l'exécution séquentielle de toutes les commandes dans un seul job.
+
+Par ailleurs, chaque job utilise `Swatinem/rust-cache@v2` pour mettre en cache les dépendances Cargo et les artifacts de compilation, réduisant ainsi considérablement les temps de build sur les exécutions suivantes.
 ## Mise à jour automatique des dépendances (`dependencies.yml`)
 
 Le fichier `.github/workflows/dependencies.yml` exécute une mise à jour automatique des dépendances Rust chaque semaine. Il :
