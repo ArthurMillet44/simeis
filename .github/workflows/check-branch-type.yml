@@ -90,6 +90,6 @@ jobs:
 
       - name: Ferme la PR si le type de branche n'est pas autorisé
         if: failure() && steps.check.outputs.should_close == 'true'
-        uses: peter-evans/close-pull-request@v3
+        uses: superbrothers/close-pull-request@v3
         with:
           comment: "Cette pull request a été fermée automatiquement car la branche source ne respecte pas les règles de nommage de ce projet."
