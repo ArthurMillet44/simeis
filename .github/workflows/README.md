@@ -34,3 +34,21 @@ Le workflow effectue les étapes suivantes :
 3. Démarrage du serveur en arrière-plan (`cargo run -p simeis-server`), avec ses logs redirigés vers `server.log`.
 4. Attente de la disponibilité du serveur, en interrogeant l'endpoint `http://localhost:8080/gamestats` jusqu'à 30 fois (1 seconde d'intervalle). Si le serveur n'est pas prêt après ce délai, le job échoue et affiche le contenu de `server.log` pour faciliter le diagnostic.
 5. Exécution des tests fonctionnels avec `pytest tests/test_functional.py`, qui viennent valider le comportement du serveur via des requêtes HTTP.
+# Qualité du code Rust (`check-code-quality.yml`)
+
+Ce workflow vérifie la qualité du code Rust du projet. Il se déclenche :
+
+- à chaque `push`, sur n'importe quelle branche
+- à chaque pull request dont la cible est `main`.
+
+Il effectue trois vérifications :
+
+1. **`cargo check --all-targets`** : vérifie que le code compile correctement sans générer de binaire final.
+2. **`cargo fmt --all -- --check`** : vérifie que le code respecte le formatage standard de `rustfmt`.
+3. **`cargo clippy --all-targets -- -D warnings`** : lance Clippy, le linter de Rust, qui détecte les mauvais schémas de code.
+
+Si l'une de ces trois étapes échoue, le workflow entier est en échec.
+
+# Formatage des tests python
+
+Le fichier `.github/workflows/check-code-quality.yaml` vérifie le formatage des scripts Python présents dans `tests/` via la commande `black --check tests/`. Black contrôle que le code respecte son style de formatage standard (longueur de ligne, lignes vides entre fonctions...). Si un fichier n'est pas conforme, le workflow échoue.
