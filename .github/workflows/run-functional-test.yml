@@ -1,0 +1,40 @@
+# Ce workflow lance un script python qui contient les tests fonctionnels
+
+name: Run functionals tests
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  run-functional-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install Python dependencies
+        run: pip install pytest requests
+
+      - name: Start the server
+        run: cargo run -p simeis-server
+
+      - name: Wait for the server to be ready
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8080/gamestats > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Server did not start in time"
+          exit 1
+
+      - name: Run functional tests
+        run: pytest tests/test_functional.py -v
