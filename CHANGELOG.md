@@ -7,15 +7,16 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 ### Added
 - **Workflows de dépendances**
   - Ajout d'un workflow `.github/workflows/dependencies.yml` pour mettre à jour automatiquement les dépendances Rust chaque semaine et créer une pull request si des modifications apparaissent.
-
+- **Workflow de couverture de test**
+  - Ajout d'un workflow `.github/workflows/check-code-coverage.yml` pour permettre de vérifier la couverture de test et de signaler si elle est inférieur à 50%.
 
 ## [v0.0.1]
 
 ### Added
-- **Workflows qualité de code**
+- **Workflow qualité de code**
   - Ajout d'un workflow pour la qualité du code rust et des tests python : `.github/workflows/check-code-quality.yml`
 
-- **Workflows branches**
+- **Workflow branches**
   - Ajout d'un workflow qui vérifie si la PR pointe vers le bon dépôt : `.github/workflows/check-pr-base.yml`
   - Ajour d'un workflow qui ajoute des règles sur les branches (par exemple sur une branche release seule les branches bugs peuvent effectuer une PR) : `.github/workflows/check-branch-type.yml`
 

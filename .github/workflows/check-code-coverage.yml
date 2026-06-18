@@ -1,0 +1,48 @@
+# Ce workflow utilise cargo-tarpaulin pour vérifier la couverture de code
+
+name: Run code coverage
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  run-code-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-tarpaulin
+
+      - name: Run cargo-tarpaulin
+        id: tarpaulin
+        run: |
+          cargo tarpaulin --workspace --out Stdout | tee tarpaulin-output.txt
+          COVERAGE=$(grep -oP '\d+\.\d+(?=% coverage)' tarpaulin-output.txt | tail -1)
+          echo "Coverage: $COVERAGE%"
+          echo "coverage=$COVERAGE" >> "$GITHUB_OUTPUT"
+
+      - name: Check coverage threshold
+        id: check
+        run: |
+          BELOW=$(awk -v c="${{ steps.tarpaulin.outputs.coverage }}" 'BEGIN { print (c < 50) ? "true" : "false" }')
+          echo "below_threshold=$BELOW" >> "$GITHUB_OUTPUT"
+
+      - name: Add "not enough tests" label
+        if: steps.check.outputs.below_threshold == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create "not enough tests" --color "d73a4a" --description "Code coverage below 50%" --force
+          gh pr edit "${{ github.event.pull_request.number }}" --add-label "not enough tests"
