@@ -24,3 +24,12 @@ Avec l'outil `gh`, authentifié via `gh auth login` :
 ```bash
 gh api --method PUT repos/<owner>/<repo>/branches/main/protection --input .github/branch-protection-rules.json
 ```
+
+## CODEOWNERS
+
+Le fichier `.github/CODEOWNERS` définit les propriétaires de code par dossier et permet à GitHub d'ajouter automatiquement les reviewers appropriés lorsqu'une PR modifie ces chemins.
+
+- `/.github/` est attribué à `@ArthurMillet44`
+- `/simeis-data/` est attribué à `@bryanmetro99`
+- `/simeis-server/` est attribué à `@MaximeKiniffo`
+- `/tests/` est attribué à `@DjoCaire`

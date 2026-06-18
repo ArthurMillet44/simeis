@@ -7,6 +7,8 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 ### Added
 - **Workflows de dépendances**
   - Ajout d'un workflow `.github/workflows/dependencies.yml` pour mettre à jour automatiquement les dépendances Rust chaque semaine et créer une pull request si des modifications apparaissent.
+- **CODEOWNERS**
+  - Ajout d'un fichier `.github/CODEOWNERS` pour assigner automatiquement les propriétaires de répertoire à la revue des changements.
 
 - **CI Rust parallèle** (`.github/workflows/rust-ci.yml`)
   - Ajout d'un workflow Rust dédié aux vérifications de formatage, compilation, lint, tests et build release.
