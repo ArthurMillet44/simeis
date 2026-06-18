@@ -19,10 +19,16 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
-      - uses: Swatinem/rust-cache@v2
+      - name: Cache des dépendances Rust
+        uses: actions/cache@v4
         with:
-            cache-on-failure: true
-            shared-key: "simeis-deps"
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
 
       - uses: taiki-e/install-action@v2
         with:
