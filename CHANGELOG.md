@@ -7,8 +7,10 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 ### Changed
 - **Workflow qualité de code** (`.github/workflows/check-code-quality.yml`)
   - Le workflow se déclenche désormais sur toutes les pull requests, quelle que soit la branche cible (auparavant limité aux PRs vers `main`)
-  - Ajout d'un cache des dépendances Rust via `Swatinem/rust-cache@v2` pour accélérer les builds suivants
-- Ajout d'un cache partagé entre les pull requests
+- **Cache Rust**: remplacement de `Swatinem/rust-cache@v2` par `actions/cache@v4` dans tous les workflows pour une gestion manuelle du cache
+- **Suppression de dépendances inutilisées** :
+  - `env_logger` retiré de `simeis-data`
+  - `urlencoding` retiré de `simeis-server`
 
 ### Added
 - **Workflow d'analyse avancée du code** (`.github/workflows/advanced-code-analysis.yml`)

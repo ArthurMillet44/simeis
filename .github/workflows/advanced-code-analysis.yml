@@ -16,10 +16,18 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Cache des dépendances Rust
-        uses: Swatinem/rust-cache@v2
+        uses: actions/cache@v4
         with:
-          cache-on-failure: true
-          shared-key: "simeis-deps"
+          # Dossiers à mettre en cache :
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin
+            target/
+          # Clé unique qui identifie ce cache. Si le Cargo.lock change alors le hash change et un nouveau cache est créé.
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
 
       - name: Lancement des tests avec la feature heavy-testing
         run: cargo test --features heavy-testing
