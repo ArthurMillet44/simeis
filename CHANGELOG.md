@@ -7,6 +7,8 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 ### Added
 - **Workflows de dépendances**
   - Ajout d'un workflow `.github/workflows/dependencies.yml` pour mettre à jour automatiquement les dépendances Rust chaque semaine et créer une pull request si des modifications apparaissent.
+- **CODEOWNERS**
+  - Ajout d'un fichier `.github/CODEOWNERS` pour assigner automatiquement les propriétaires de répertoire à la revue des changements.
 
 - **Templates de PR et d'issues** (`.github/templates/`)
   - Ajout de templates standardisés pour les pull requests (`pull_request_template.md`) et les issues (`issue_template.md`) pour harmoniser les contributions.
