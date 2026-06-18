@@ -26,11 +26,6 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build release artifacts
-        run: |
-          make release
-          make manual
-
       - name: Create or update GitHub Release
         uses: github/create-update-github-release@v2
         with:
@@ -48,3 +43,50 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
+      - name: Generate changelog 
+        env: 
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        run: | 
+          echo "## [${{ env.VERSION }}] " > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+
+          echo "## Features" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+
+          gh pr list \
+            --state merged \
+            --base "${GITHUB_BASE_REF}" \
+            --limit 100 \
+            --json number,title,headRefName,url \
+            --jq '.[] |
+              select(.headRefName | startswith("feature/")) |
+              "- [\(.title)](\(.url))"' \
+            >> CHANGELOG.md
+
+          echo "" >> CHANGELOG.md
+          echo "## Bugfix" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+
+          gh pr list \
+            --state merged \
+            --base "${GITHUB_BASE_REF}" \
+            --limit 100 \
+            --json number,title,headRefName,url \
+            --jq '.[] |
+              select(.headRefName | startswith("bug/")) |
+              "- [\(.title)](\(.url))"' \
+            >> CHANGELOG.md
+
+          echo "" >> CHANGELOG.md
+          echo "## Docs" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+
+          gh pr list \
+            --state merged \
+            --base "${GITHUB_BASE_REF}" \
+            --limit 100 \
+            --json number,title,headRefName,url \
+            --jq '.[] |
+              select(.headRefName | startswith("docs/")) |
+              "- [\(.title)](\(.url))"' \
+            >> CHANGELOG.md
