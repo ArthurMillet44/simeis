@@ -16,6 +16,9 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 - **CODEOWNERS**
   - Ajout d'un fichier `.github/CODEOWNERS` pour assigner automatiquement les propriétaires de répertoire à la revue des changements.
 
+- **Templates de PR et d'issues** (`.github/templates/`)
+  - Ajout de templates standardisés pour les pull requests (`pull_request_template.md`) et les issues (`issue_template.md`) pour harmoniser les contributions.
+
 - **CI Rust parallèle** (`.github/workflows/rust-ci.yml`)
   - Ajout d'un workflow Rust dédié aux vérifications de formatage, compilation, lint, tests et build release.
   - Séparation des vérifications en jobs indépendants pour permettre leur exécution en parallèle.
