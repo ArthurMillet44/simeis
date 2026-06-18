@@ -42,6 +42,7 @@ Le workflow effectue les étapes suivantes :
 3. Démarrage du serveur en arrière-plan (`cargo run -p simeis-server`), avec ses logs redirigés vers `server.log`.
 4. Attente de la disponibilité du serveur, en interrogeant l'endpoint `http://localhost:8080/gamestats` jusqu'à 30 fois (1 seconde d'intervalle). Si le serveur n'est pas prêt après ce délai, le job échoue et affiche le contenu de `server.log` pour faciliter le diagnostic.
 5. Exécution des tests fonctionnels avec `pytest tests/test_functional.py`, qui viennent valider le comportement du serveur via des requêtes HTTP.
+
 # Qualité du code Rust (`check-code-quality.yml`)
 
 Ce workflow vérifie la qualité du code Rust du projet. Il se déclenche :
@@ -60,3 +61,9 @@ Si l'une de ces trois étapes échoue, le workflow entier est en échec.
 # Formatage des tests python
 
 Le fichier `.github/workflows/check-code-quality.yaml` vérifie le formatage des scripts Python présents dans `tests/` via la commande `black --check tests/`. Black contrôle que le code respecte son style de formatage standard (longueur de ligne, lignes vides entre fonctions...). Si un fichier n'est pas conforme, le workflow échoue.
+
+# Couverture du code (`check-code-coverage.yml`)
+
+Ce workflow vérifie la couverture de code grâce à l'outil `cargo-tarpaulin`. 
+Il ce déclenche sur chaque pull request. Si la couverture est inférieur à 50%, un label `not enough tests` est ajouté sur la pull
+request.
