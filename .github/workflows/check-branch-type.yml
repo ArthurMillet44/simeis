@@ -14,7 +14,7 @@
 name: Check PR branch type
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, edited, reopened, synchronize]
 
 jobs:
