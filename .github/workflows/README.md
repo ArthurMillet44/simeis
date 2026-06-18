@@ -23,6 +23,19 @@ Concrètement, le workflow extrait le préfixe (la partie avant le premier `/`) 
 
 Le fichier `.github/workflows/ci.yml` configure un pipeline d'intégration continue et de déploiement qui s'exécute automatiquement sur les pull requests et les push vers la branche `main`. Il effectue des vérifications de qualité (check, clippy, tests), compile le projet, et génère le manuel. Lors d'un push sur `main`, il déclenche également une release optimisée.
 
+## CI Rust parallèle (`rust-ci.yml`)
+
+Le fichier `.github/workflows/rust-ci.yml` ajoute une CI dédiée au projet Rust. Il se déclenche sur les push vers `main` et les branches `feature/*`, ainsi que sur les pull requests qui ciblent `main`.
+
+Le workflow sépare les vérifications Rust en plusieurs jobs indépendants afin qu'ils puissent être exécutés en parallèle :
+
+1. **`fmt`** : vérifie le formatage du code avec `cargo fmt --check`.
+2. **`check`** : vérifie rapidement que tout le workspace compile avec `cargo check --workspace`.
+3. **`clippy`** : analyse la qualité du code avec `cargo clippy --workspace --all-targets -- -D warnings`.
+4. **`tests`** : lance les tests Rust avec `cargo test`.
+5. **`build`** : vérifie que le projet compile en mode release avec `cargo build --release`.
+
+Cette séparation permet d'obtenir un retour plus clair et plus rapide : une erreur de formatage, de lint, de test ou de build apparaît dans un job dédié, sans attendre l'exécution séquentielle de toutes les commandes dans un seul job.
 ## Mise à jour automatique des dépendances (`dependencies.yml`)
 
 Le fichier `.github/workflows/dependencies.yml` exécute une mise à jour automatique des dépendances Rust chaque semaine. Il :
@@ -42,6 +55,7 @@ Le workflow effectue les étapes suivantes :
 3. Démarrage du serveur en arrière-plan (`cargo run -p simeis-server`), avec ses logs redirigés vers `server.log`.
 4. Attente de la disponibilité du serveur, en interrogeant l'endpoint `http://localhost:8080/gamestats` jusqu'à 30 fois (1 seconde d'intervalle). Si le serveur n'est pas prêt après ce délai, le job échoue et affiche le contenu de `server.log` pour faciliter le diagnostic.
 5. Exécution des tests fonctionnels avec `pytest tests/test_functional.py`, qui viennent valider le comportement du serveur via des requêtes HTTP.
+
 # Qualité du code Rust (`check-code-quality.yml`)
 
 Ce workflow vérifie la qualité du code Rust du projet. Il se déclenche :
@@ -60,3 +74,9 @@ Si l'une de ces trois étapes échoue, le workflow entier est en échec.
 # Formatage des tests python
 
 Le fichier `.github/workflows/check-code-quality.yaml` vérifie le formatage des scripts Python présents dans `tests/` via la commande `black --check tests/`. Black contrôle que le code respecte son style de formatage standard (longueur de ligne, lignes vides entre fonctions...). Si un fichier n'est pas conforme, le workflow échoue.
+
+# Couverture du code (`check-code-coverage.yml`)
+
+Ce workflow vérifie la couverture de code grâce à l'outil `cargo-tarpaulin`. 
+Il ce déclenche sur chaque pull request. Si la couverture est inférieur à 50%, un label `not enough tests` est ajouté sur la pull
+request.
