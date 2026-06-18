@@ -2,9 +2,16 @@
 
 Tous les changements notables de ce projet sont documentés dans ce fichier.
 
-## [Unreleased]
+## [v0.0.1]
 
 ### Added
+- **Workflows qualité de code**
+  - Ajout d'un workflow pour la qualité du code rust et des tests python : `.github/workflows/check-code-quality.yml`
+
+- **Workflows branches**
+  - Ajout d'un workflow qui vérifie si la PR pointe vers le bon dépôt : `.github/workflows/check-pr-base.yml`
+  - Ajour d'un workflow qui ajoute des règles sur les branches (par exemple sur une branche release seule les branches bugs peuvent effectuer une PR) : `.github/workflows/check-branch-type.yml`
+
 - **Système CI/CD** (`.github/workflows/ci.yml`)
   - Pipeline GitHub Actions pour vérification automatique des pull requests
   - Workflow de release automatique sur push vers `main`

@@ -1,0 +1,62 @@
+# Ce workflow vérifie la qualité du code Rust à chaque push (toutes
+# branches) et à chaque pull request sur main. 
+# Il effectue trois vérifications :
+#
+#   - cargo check        : vérifie que le code compile
+#   - cargo fmt --check  : vérifie que le code respecte le formatage standard de rustfmt
+#   - cargo clippy        : analyse statique qui détecte les mauvais schémas/anti-patterns Rust
+#
+#
+# Côté Python (scripts de tests dans tests/) :
+#   - black --check      : vérifie que le code Python respecte le formatage
+#                           standard imposé par black
+#
+# Si une seule de ces vérifications échoue, le workflow entier est en échec.
+
+
+name: Check code quality
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      # Récupère le code du repo dans l'environnement d'exécution.
+      - name: Checkout du code
+        uses: actions/checkout@v6
+
+      # Installe la toolchain avec les composants rustfmt et clippy
+      - name: Installation de la toolchain Rust
+        run: |
+          rustup update stable
+          rustup default stable
+          rustup component add rustfmt clippy
+
+      # Vérifie que le code compile correctement.
+      - name: cargo check
+        run: cargo check --all-targets
+
+      # Vérifie que le code respecte le formatage standard de rustfmt.
+      - name: cargo fmt --check
+        run: cargo fmt --all -- --check
+
+      # Lance clippy, le linter de Rust
+      - name: cargo clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+      # Installe black, un outil de formatage pour Python.
+      - name: Installation de black
+        run: pip install black
+ 
+      # Vérifie que les scripts Python de tests
+      # respectent le formatage imposé par black. 
+      # Si le formatage n'est pas correct, le workflow échoue
+      - name: black --check (formatage du code Python des tests)
+        run: black --check tests/
