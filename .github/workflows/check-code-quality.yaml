@@ -7,15 +7,11 @@
 #   - cargo clippy        : analyse statique qui détecte les mauvais schémas/anti-patterns Rust
 #
 #
-# Côté Python (scripts de tests d'intégration dans tests/) :
+# Côté Python (scripts de tests dans tests/) :
 #   - black --check      : vérifie que le code Python respecte le formatage
-#                           standard imposé par black, sans le réécrire
+#                           standard imposé par black
 #
 # Si une seule de ces vérifications échoue, le workflow entier est en échec.
- 
-#
-# Si une seule de ces vérifications échoue, le workflow entier est en échec.
-
 
 
 name: Check code quality
@@ -55,15 +51,12 @@ jobs:
       - name: cargo clippy
         run: cargo clippy --all-targets -- -D warnings
 
-      # Installe black, l'outil de formatage standard pour Python.
-      # Python lui-même est déjà préinstallé sur les runners GitHub Ubuntu,
-      # donc seul l'outil black doit être installé via pip.
+      # Installe black, un outil de formatage pour Python.
       - name: Installation de black
         run: pip install black
  
-      # Vérifie que les scripts Python de tests d'intégration (tests/)
-      # respectent le formatage imposé par black. --check fait échouer
-      # la commande si un fichier n'est pas correctement formaté, sans
-      # le réécrire automatiquement (même logique que cargo fmt --check).
+      # Vérifie que les scripts Python de tests
+      # respectent le formatage imposé par black. 
+      # Si le formatage n'est pas correct, le workflow échoue
       - name: black --check (formatage du code Python des tests)
         run: black --check tests/
