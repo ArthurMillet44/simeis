@@ -35,8 +35,12 @@ jobs:
       - name: Lancement du script de tests fonctionnels heavy
         run: python tests/heavy_tests.py
 
-      - name: Installation de cargo-audit
-        run: cargo install cargo-audit
+      # cargo-binstall télécharge des binaires pré-compilés au lieu de les recompiler.
+      - name: Installation de cargo-binstall
+        uses: cargo-bins/cargo-binstall@main
+
+      - name: Installation de cargo-audit et cargo-udeps via binstall
+        run: cargo binstall cargo-audit cargo-udeps --no-confirm
 
       # Vérifie que les dépendances ne contiennent pas de vulnérabilités connues (CVE).
       - name: cargo audit
@@ -45,9 +49,6 @@ jobs:
       # cargo-udeps a besoin de nightly pour analyser les dépendances inutilisées.
       - name: Installation de la toolchain nightly (pour cargo-udeps)
         uses: dtolnay/rust-toolchain@nightly
-
-      - name: Installation de cargo-udeps
-        run: cargo install cargo-udeps
 
       # Vérifie qu'aucune dépendance déclarée dans Cargo.toml n'est inutilisée.
       - name: cargo udeps
