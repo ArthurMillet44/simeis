@@ -7,6 +7,11 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 ### Added
 - **Workflows de dépendances**
   - Ajout d'un workflow `.github/workflows/dependencies.yml` pour mettre à jour automatiquement les dépendances Rust chaque semaine et créer une pull request si des modifications apparaissent.
+
+- **CI Rust parallèle** (`.github/workflows/rust-ci.yml`)
+  - Ajout d'un workflow Rust dédié aux vérifications de formatage, compilation, lint, tests et build release.
+  - Séparation des vérifications en jobs indépendants pour permettre leur exécution en parallèle.
+
 - **Workflow de couverture de test**
   - Ajout d'un workflow `.github/workflows/check-code-coverage.yml` pour permettre de vérifier la couverture de test et de signaler si elle est inférieur à 50%.
 
