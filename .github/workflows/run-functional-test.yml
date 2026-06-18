@@ -15,6 +15,8 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
+      - uses: Swatinem/rust-cache@v2
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -23,7 +25,7 @@ jobs:
         run: pip install pytest requests
 
       - name: Start the server
-        run: cargo run -p simeis-server
+        run: cargo run -p simeis-server &
 
       - name: Wait for the server to be ready
         run: |
