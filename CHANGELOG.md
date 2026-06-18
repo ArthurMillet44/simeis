@@ -4,6 +4,12 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 
 ## [v0.0.2]
 
+### Changed
+- **Workflow qualité de code** (`.github/workflows/check-code-quality.yml`)
+  - Le workflow se déclenche désormais sur toutes les pull requests, quelle que soit la branche cible (auparavant limité aux PRs vers `main`)
+  - Ajout d'un cache des dépendances Rust via `Swatinem/rust-cache@v2` pour accélérer les builds suivants
+- Ajout d'un cache partagé entre les pull requests
+
 ### Added
 - **Workflows de dépendances**
   - Ajout d'un workflow `.github/workflows/dependencies.yml` pour mettre à jour automatiquement les dépendances Rust chaque semaine et créer une pull request si des modifications apparaissent.

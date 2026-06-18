@@ -1,5 +1,5 @@
 # Ce workflow vérifie la qualité du code Rust à chaque push (toutes
-# branches) et à chaque pull request sur main. 
+# branches) et à chaque pull request (toutes branches).
 # Il effectue trois vérifications :
 #
 #   - cargo check        : vérifie que le code compile
@@ -21,8 +21,6 @@ on:
     branches:
       - '**'
   pull_request:
-    branches:
-      - main
 
 jobs:
   quality:
@@ -30,14 +28,20 @@ jobs:
     steps:
       # Récupère le code du repo dans l'environnement d'exécution.
       - name: Checkout du code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       # Installe la toolchain avec les composants rustfmt et clippy
       - name: Installation de la toolchain Rust
-        run: |
-          rustup update stable
-          rustup default stable
-          rustup component add rustfmt clippy
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      # Met en cache les dépendances Rust pour accélérer les builds suivants.
+      - name: Cache des dépendances Rust
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          shared-key: "simeis-deps"
 
       # Vérifie que le code compile correctement.
       - name: cargo check
@@ -50,6 +54,12 @@ jobs:
       # Lance clippy, le linter de Rust
       - name: cargo clippy
         run: cargo clippy --all-targets -- -D warnings
+
+      # Installe Python
+      - name: Installation de Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
 
       # Installe black, un outil de formatage pour Python.
       - name: Installation de black
