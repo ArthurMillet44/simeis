@@ -2,6 +2,13 @@
 
 Tous les changements notables de ce projet sont documentés dans ce fichier.
 
+## [v0.0.2]
+
+### Added
+- **Workflows de dépendances**
+  - Ajout d'un workflow `.github/workflows/dependencies.yml` pour mettre à jour automatiquement les dépendances Rust chaque semaine et créer une pull request si des modifications apparaissent.
+
+
 ## [v0.0.1]
 
 ### Added
