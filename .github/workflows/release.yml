@@ -31,6 +31,11 @@ jobs:
           make release
           make manual
 
+      - name: Build docker image
+        run: |
+          docker build -f .github/Dockerfile -t simeis-server:1.0 .
+          docker save simeis-server:1.0 > simeis-server.tar
+
       - name: Create or update GitHub Release
         uses: github/create-update-github-release@v2
         with:
@@ -45,6 +50,7 @@ jobs:
             doc/manual.pdf
             doc/swagger.json
             doc/swagger-ui.html
+            simeis-server.tar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
