@@ -77,6 +77,16 @@ Si l'une de ces trois étapes échoue, le workflow entier est en échec.
 
 Le fichier `.github/workflows/check-code-quality.yaml` vérifie le formatage des scripts Python présents dans `tests/` via la commande `black --check tests/`. Black contrôle que le code respecte son style de formatage standard (longueur de ligne, lignes vides entre fonctions...). Si un fichier n'est pas conforme, le workflow échoue.
 
+# Analyse avancée du code (`advanced-code-analysis.yml`)
+
+Ce workflow effectue une analyse approfondie du code lors d'une pull request ciblant une branche `release/*`. Il exécute les étapes suivantes :
+
+1. Lancement des tests unitaires avec la feature `heavy-testing` (`cargo test --features heavy-testing`).
+2. Compilation du serveur en mode debug avec la feature `heavy-testing` (`cargo build -p simeis-server --features heavy-testing`).
+3. Exécution du script de tests fonctionnels lourds (`tests/heavy_tests.py`).
+4. Audit de sécurité des dépendances via `cargo audit`.
+5. Détection des dépendances inutilisées via `cargo +nightly udeps --all-targets`.
+
 # Couverture du code (`check-code-coverage.yml`)
 
 Ce workflow vérifie la couverture de code grâce à l'outil `cargo-tarpaulin`. 

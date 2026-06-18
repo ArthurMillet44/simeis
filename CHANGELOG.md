@@ -11,6 +11,16 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 - Ajout d'un cache partagé entre les pull requests
 
 ### Added
+- **Workflow d'analyse avancée du code** (`.github/workflows/advanced-code-analysis.yml`)
+  - Déclenché sur les pull requests ciblant une branche `release/*`
+  - Tests unitaires avec la feature `heavy-testing`
+  - Compilation du serveur en mode debug avec la feature `heavy-testing`
+  - Squelette d'un script de tests fonctionnels lourds (`tests/heavy_tests.py`)
+  - Audit de sécurité des dépendances via `cargo-audit`
+  - Détection des dépendances inutilisées via `cargo-udeps`
+- **Feature `heavy-testing`** dans `simeis-data` et `simeis-server`
+  - Feature Cargo vide pour l'instant, destinée à activer les tests lourds dans le workflow d'analyse avancée
+
 - **Workflows de dépendances**
   - Ajout d'un workflow `.github/workflows/dependencies.yml` pour mettre à jour automatiquement les dépendances Rust chaque semaine et créer une pull request si des modifications apparaissent.
 - **CODEOWNERS**
