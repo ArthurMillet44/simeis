@@ -2,7 +2,7 @@
 
 Tous les changements notables de ce projet sont documentés dans ce fichier.
 
-## [v0.0.1]
+## [v0.0.2]
 
 ### Added
 - **Workflows qualité de code**
@@ -17,6 +17,9 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
   - Workflow de release automatique sur push vers `main`
   - Tâches: check, test, build, et compilation du manuel
   - Support multi-plateforme avec installation de Typst
+
+- **Workflows de dépendances**
+  - Ajout d'un workflow `.github/workflows/dependencies.yml` pour mettre à jour automatiquement les dépendances Rust chaque semaine et créer une pull request si des modifications apparaissent.
 
 - **Makefile** pour simplifier les tâches de build et développement
   - `make all` - Exécute checks, tests, build et compilation du manuel

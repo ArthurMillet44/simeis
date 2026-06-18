@@ -23,6 +23,14 @@ Concrètement, le workflow extrait le préfixe (la partie avant le premier `/`) 
 
 Le fichier `.github/workflows/ci.yml` configure un pipeline d'intégration continue et de déploiement qui s'exécute automatiquement sur les pull requests et les push vers la branche `main`. Il effectue des vérifications de qualité (check, clippy, tests), compile le projet, et génère le manuel. Lors d'un push sur `main`, il déclenche également une release optimisée.
 
+## Mise à jour automatique des dépendances (`dependencies.yml`)
+
+Le fichier `.github/workflows/dependencies.yml` exécute une mise à jour automatique des dépendances Rust chaque semaine. Il :
+
+1. s'exécute sur une planification hebdomadaire et peut être lancé manuellement via `workflow_dispatch` ;
+2. installe `cargo-update` et lance `cargo upgrade` pour mettre à jour `Cargo.toml` et `Cargo.lock` ;
+3. vérifie s'il y a eu des modifications et, si oui, crée automatiquement une pull request avec les changements de dépendances.
+
 ## Lancement des tests fonctionnels (`run-functional-test.yml`)
 
 Le fichier `.github/workflows/run-functional-test.yml` exécute les tests fonctionnels du projet à chaque ouverture, modification ou mise à jour d'une pull request.
