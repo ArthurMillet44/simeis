@@ -1,0 +1,40 @@
+name: Update dependencies
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cargo-update
+        run: cargo install cargo-update
+
+      - name: Update dependencies
+        run: cargo upgrade
+
+      - name: Detect changes
+        id: changes
+        run: |
+          git diff --quiet Cargo.toml Cargo.lock || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          commit-message: "chore: update dependencies"
+          title: "chore: update Rust dependencies"
+          body: "Automatic dependency update."
+          branch: bot/dependency-update
+          labels: bot/update
