@@ -2,7 +2,7 @@
 
 Tous les changements notables de ce projet sont documentés dans ce fichier.
 
-## [Unreleased]
+## [v0.0.1]
 
 ### Added
 - **Workflows qualité de code**
