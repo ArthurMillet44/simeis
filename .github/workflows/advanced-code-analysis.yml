@@ -1,0 +1,54 @@
+name: Advanced code analysis
+
+on:
+  pull_request:
+    branches:
+      - 'release/**'
+
+jobs:
+  analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installation de la toolchain Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache des dépendances Rust
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          shared-key: "simeis-deps"
+
+      - name: Lancement des tests avec la feature heavy-testing
+        run: cargo test --features heavy-testing
+
+      - name: Compilation en mode debug avec la feature heavy-testing
+        run: cargo build -p simeis-server --features heavy-testing
+
+      - name: Installation de Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Lancement du script de tests fonctionnels heavy
+        run: python tests/heavy_tests.py
+
+      - name: Installation de cargo-audit
+        run: cargo install cargo-audit
+
+      # Vérifie que les dépendances ne contiennent pas de vulnérabilités connues (CVE).
+      - name: cargo audit
+        run: cargo audit
+
+      # cargo-udeps a besoin de nightly pour analyser les dépendances inutilisées.
+      - name: Installation de la toolchain nightly (pour cargo-udeps)
+        uses: dtolnay/rust-toolchain@nightly
+
+      - name: Installation de cargo-udeps
+        run: cargo install cargo-udeps
+
+      # Vérifie qu'aucune dépendance déclarée dans Cargo.toml n'est inutilisée.
+      - name: cargo udeps
+        run: cargo +nightly udeps --all-targets
