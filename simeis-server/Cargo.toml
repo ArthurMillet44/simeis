@@ -19,7 +19,7 @@ strum = { workspace = true }
 mea = { workspace = true }
 
 [features]
-default = ["compio"]
+default = ["tokio"]
 testing = ["simeis-data/testing"]
 extraspeed = ["simeis-data/extraspeed"]
 heavy-testing = ["simeis-data/heavy-testing"]

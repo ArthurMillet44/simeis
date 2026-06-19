@@ -36,3 +36,5 @@ Le build est aussi testé avec plusieurs versions de Rust :
 - `1.88.0`
 
 Cette matrice permet de détecter plus rapidement les problèmes spécifiques à un OS, par exemple des chemins de fichiers ou des commandes incompatibles entre Linux, Windows et macOS.
+
+Pour rester compatible avec les anciennes versions de Rust testées dans la matrice, le serveur utilise `tokio` comme runtime par défaut. Le runtime `compio` reste disponible via la feature Cargo `compio`, mais il n'est pas activé par défaut.

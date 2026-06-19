@@ -12,6 +12,8 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
   - Ajout d'une matrice de build sur le job `build` pour compiler le projet sur `macos-latest`, `ubuntu-latest` et `windows-latest`
   - La matrice teste les versions Rust `1.75.0`, `1.80.0`, `1.85.0` et `1.88.0`
   - Les clés de cache Cargo utilisent l'OS du runner, le fichier `Cargo.lock` et les fichiers Rust racine
+- **Runtime serveur par défaut** (`simeis-server/Cargo.toml`)
+  - Remplacement du runtime par défaut `compio` par `tokio` pour garder le build compatible avec les anciennes versions Rust de la matrice CI
 - **Suppression de dépendances inutilisées** :
   - `env_logger` retiré de `simeis-data`
   - `urlencoding` retiré de `simeis-server`
