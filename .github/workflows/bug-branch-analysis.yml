@@ -45,6 +45,6 @@ jobs:
             gh pr create \
               --base "$TARGET" \
               --head "$SOURCE_BRANCH" \
-              --title "chore: propagation de $SOURCE_BRANCH vers $TARGET" \
+              --title "bug: propagation de $SOURCE_BRANCH vers $TARGET" \
               --body "Propagation automatique depuis la PR #$PR_NUMBER."
           done
