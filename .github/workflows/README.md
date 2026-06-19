@@ -102,6 +102,10 @@ Ce workflow effectue une analyse approfondie du code lors d'une pull request cib
 4. Audit de sécurité des dépendances via `cargo audit`.
 5. Détection des dépendances inutilisées via `cargo +nightly udeps --all-targets`.
 
+# Vérification des TODOs (`check-todos.yml`)
+
+Ce workflow vérifie que chaque TODO dans les fichiers `.rs` et `.py` est associé à une issue GitHub ouverte. Il échoue si un TODO n'a pas de référence (`TODO (#numéro)`), si l'issue n'existe pas, ou si elle est fermée. La logique est implémentée dans `scripts/check_todos.py`.
+
 # Propagation des branches bug (`bug-branch-analysis.yml`)
 
 Ce workflow se déclenche lorsqu'une PR dont la branche source est `bug/*` est mergée. Pour chaque label de la forme `propagate:release/x` présent sur la PR, il crée automatiquement une PR de la branche `bug/*` vers la branche `release/x` correspondante.
