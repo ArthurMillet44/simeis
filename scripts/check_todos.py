@@ -8,6 +8,9 @@ TODO_PATTERN = re.compile(r"TODO\s+\(#(\d+)\)")
 # Extensions de fichiers dans lesquels chercher les TODOs
 FILES_TO_SCAN = ["--include=*.rs", "--include=*.py"]
 
+# Répertoires à exclure du scan
+DIRS_TO_EXCLUDE = ["--exclude-dir=scripts"]
+
 # État d'une issue fermée sur GitHub
 ISSUE_CLOSED = "CLOSED"
 
@@ -17,7 +20,7 @@ def find_todos():
     # -r : récursif, -n : affiche le numéro de ligne
     # Retourne une liste de chaînes de la forme "fichier:ligne:contenu"
     result = subprocess.run(
-        ["grep", "-rn", "TODO"] + FILES_TO_SCAN + ["."],
+        ["grep", "-rn", "TODO"] + FILES_TO_SCAN + DIRS_TO_EXCLUDE + ["."],
         capture_output=True,
         text=True,
     )
