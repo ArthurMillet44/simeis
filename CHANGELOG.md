@@ -3,6 +3,9 @@
 Tous les changements notables de ce projet sont documentés dans ce fichier.
 
 ## [v0.0.2]
+### Added
+- **Workflow de release** (`.github/workflows/release.yml`)
+  - Le workflow se déclenche lorsque une branche est merge vers une branche de release.
 
 ### Changed
 - **Workflow qualité de code** (`.github/workflows/check-code-quality.yml`)
