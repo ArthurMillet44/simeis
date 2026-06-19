@@ -22,10 +22,17 @@ Les différents workflows de ci sont expliqués dans le fichier [.github/workflo
 
 ### Build Rust multi-OS
 
-Le workflow Rust CI (`.github/workflows/rust-ci.yml`) utilise une matrice de build pour vérifier que le projet compile sur plusieurs systèmes d'exploitation avec Rust stable :
+Le workflow Rust CI (`.github/workflows/rust-ci.yml`) utilise une matrice de build pour vérifier que le projet compile en mode release sur plusieurs systèmes d'exploitation :
 
+- `macos-latest`
 - `ubuntu-latest`
 - `windows-latest`
-- `macos-latest`
+
+Le build est aussi testé avec plusieurs versions de Rust :
+
+- `1.75.0`
+- `1.80.0`
+- `1.85.0`
+- `1.88.0`
 
 Cette matrice permet de détecter plus rapidement les problèmes spécifiques à un OS, par exemple des chemins de fichiers ou des commandes incompatibles entre Linux, Windows et macOS.

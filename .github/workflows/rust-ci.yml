@@ -76,8 +76,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        rust: [stable]
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        rust: [1.75.0, 1.80.0, 1.85.0, 1.88.0]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
