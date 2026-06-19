@@ -20,6 +20,9 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
   - Squelette d'un script de tests fonctionnels lourds (`tests/heavy_tests.py`)
   - Audit de sécurité des dépendances via `cargo-audit`
   - Détection des dépendances inutilisées via `cargo-udeps`
+- **Workflow de propagation des branches bug** (`.github/workflows/bug-branch-analysis.yml`)
+  - Se déclenche au merge d'une PR depuis une branche `bug/*`
+  - Crée automatiquement une PR vers chaque branche `release/x` indiquée par un label `propagate:release/x`
 - **Feature `heavy-testing`** dans `simeis-data` et `simeis-server`
   - Feature Cargo vide pour l'instant, destinée à activer les tests lourds dans le workflow d'analyse avancée
 
