@@ -1,0 +1,50 @@
+name: Bug branch analysis
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  propagate:
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'bug/')
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Créer les PRs de propagation
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          SOURCE_BRANCH: ${{ github.head_ref }}
+        run: |
+          # gh pr view $PR_NUMBER --json labels : Récupère les labels
+
+          # --jq '.labels[].name' : extrait le nom du label
+
+          # | select(startswith("propagate:")) : garde que ceux qui commencent par "propagate:"
+
+          # | ltrimstr("propagate:") : supprime préfixe propagate
+
+          # TARGETS contient une liste de branche cible
+
+          TARGETS=$(gh pr view $PR_NUMBER --json labels \
+            --jq '.labels[].name | select(startswith("propagate:")) | ltrimstr("propagate:")')
+
+          echo "Labels propagate détectés : '$TARGETS'"
+
+          if [ -z "$TARGETS" ]; then
+            echo "Aucun label propagate:* trouvé, rien à faire."
+            exit 0
+          fi
+
+          for TARGET in $TARGETS; do
+            gh pr create \
+              --base "$TARGET" \
+              --head "$SOURCE_BRANCH" \
+              --title "bug: propagation de $SOURCE_BRANCH vers $TARGET" \
+              --body "Propagation automatique depuis la PR #$PR_NUMBER."
+          done
