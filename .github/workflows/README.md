@@ -107,3 +107,5 @@ Ce workflow effectue une analyse approfondie du code lors d'une pull request cib
 Ce workflow vérifie la couverture de code grâce à l'outil `cargo-tarpaulin`. 
 Il ce déclenche sur chaque pull request. Si la couverture est inférieur à 50%, un label `not enough tests` est ajouté sur la pull
 request.
+
+#Test
