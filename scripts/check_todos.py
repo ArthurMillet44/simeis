@@ -31,8 +31,10 @@ def find_todos():
 
 
 def get_issue_info(issue_num):
-    # Interroge l'API GitHub pour récupérer l'état et l'URL de l'issue
-    # Retourne un tuple (state, url), ou (None, None) si l'issue n'existe pas
+    # Interroge l'API GitHub pour récupérer l'état et l'URL de l'issue.
+    # Retourne un tuple (state, url), ou (None, None) si l'issue n'existe pas.
+    # Note : l'API GitHub retourne aussi les PRs via gh issue view (numérotation partagée).
+    # On vérifie donc que l'URL contient "/issues/" pour s'assurer que c'est bien une issue.
     result = subprocess.run(
         ["gh", "issue", "view", issue_num, "--json", "state,url"],
         capture_output=True,
@@ -41,6 +43,8 @@ def get_issue_info(issue_num):
     if not result.stdout.strip():
         return None, None
     data = json.loads(result.stdout)
+    if "/issues/" not in data["url"]:
+        return None, None
     return data["state"], data["url"]
 
 
