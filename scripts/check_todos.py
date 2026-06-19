@@ -1,6 +1,7 @@
 import subprocess
 import re
 import sys
+import json
 
 # Format attendu pour un TODO lié à une issue : TODO (#123)
 TODO_PATTERN = re.compile(r"TODO\s+\(#(\d+)\)")
@@ -29,15 +30,18 @@ def find_todos():
     return result.stdout.splitlines()
 
 
-def get_issue_state(issue_num):
-    # Interroge l'API GitHub pour récupérer l'état de l'issue
-    # Retourne "OPEN", "CLOSED", ou une chaîne vide si l'issue n'existe pas
+def get_issue_info(issue_num):
+    # Interroge l'API GitHub pour récupérer l'état et l'URL de l'issue
+    # Retourne un tuple (state, url), ou (None, None) si l'issue n'existe pas
     result = subprocess.run(
-        ["gh", "issue", "view", issue_num, "--json", "state", "--jq", ".state"],
+        ["gh", "issue", "view", issue_num, "--json", "state,url"],
         capture_output=True,
         text=True,
     )
-    return result.stdout.strip()
+    if not result.stdout.strip():
+        return None, None
+    data = json.loads(result.stdout)
+    return data["state"], data["url"]
 
 
 def error(file_path, line_num, message):
@@ -54,17 +58,17 @@ def check_todo(file_path, line_num, content):
         return False
 
     issue_num = match.group(1)
-    state = get_issue_state(issue_num)
+    state, url = get_issue_info(issue_num)
 
     if not state:
         error(file_path, line_num, f"L'issue #{issue_num} n'existe pas.")
         return False
 
     if state == ISSUE_CLOSED:
-        error(file_path, line_num, f"L'issue #{issue_num} est fermée.")
+        error(file_path, line_num, f"L'issue #{issue_num} est fermée. {url}")
         return False
 
-    print(f"OK : {file_path}:{line_num} → issue #{issue_num} ouverte.")
+    print(f"OK : {file_path}:{line_num} → issue #{issue_num} ouverte. {url}")
     return True
 
 
