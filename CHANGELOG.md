@@ -20,6 +20,10 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
   - Squelette d'un script de tests fonctionnels lourds (`tests/heavy_tests.py`)
   - Audit de sécurité des dépendances via `cargo-audit`
   - Détection des dépendances inutilisées via `cargo-udeps`
+- **Workflow de vérification des TODOs** (`.github/workflows/check-todos.yml`)
+  - Vérifie que chaque TODO référence une issue ouverte au format `TODO (#numéro)`
+  - Échoue si l'issue est absente, inexistante ou fermée
+  - Logique implémentée dans `scripts/check_todos.py`
 - **Workflow de propagation des branches bug** (`.github/workflows/bug-branch-analysis.yml`)
   - Se déclenche au merge d'une PR depuis une branche `bug/*`
   - Crée automatiquement une PR vers chaque branche `release/x` indiquée par un label `propagate:release/x`
