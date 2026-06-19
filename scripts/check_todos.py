@@ -36,8 +36,8 @@ def get_issue_state(issue_num):
 
 
 def error(file_path, line_num, message):
-    # Affiche une d'erreur directement sur la ligne dans GitHub
-    print(f"::error file={file_path},line={line_num}::{message}")
+    # Affiche une annotation d'erreur sur la ligne dans GitHub et dans les logs
+    print(f"::error file={file_path},line={line_num}::{file_path}:{line_num} - {message}") - {message}")
 
 
 def check_todo(file_path, line_num, content):
