@@ -25,9 +25,8 @@ jobs:
             ~/.cargo/bin
             target/
           # Clé unique qui identifie ce cache. Si le Cargo.lock change alors le hash change et un nouveau cache est créé.
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}${{ hashFiles('**/*.rs') }}
+          restore-keys: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Lancement des tests avec la feature heavy-testing
         run: cargo test --features heavy-testing
