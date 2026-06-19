@@ -1,7 +1,7 @@
-use std::collections::{hash_map::DefaultHasher, BTreeMap};
+use std::collections::BTreeMap;
 use std::hash::Hasher;
 
-use tokio::sync::RwLock;
+use mea::rwlock::RwLock;
 
 pub trait ShardDataKey: Ord + Clone {
     fn get_shard_idx(&self, totcap: usize) -> usize;
@@ -84,7 +84,7 @@ impl ShardDataKey for u64 {
 
 impl ShardDataKey for crate::player::PlayerKey {
     fn get_shard_idx(&self, totcap: usize) -> usize {
-        let mut h = DefaultHasher::new();
+        let mut h = std::hash::DefaultHasher::new();
         h.write(self);
         let n = h.finish() as usize;
         let sep = usize::MAX / totcap;
@@ -94,7 +94,7 @@ impl ShardDataKey for crate::player::PlayerKey {
 
 impl ShardDataKey for String {
     fn get_shard_idx(&self, totcap: usize) -> usize {
-        let mut h = DefaultHasher::new();
+        let mut h = std::hash::DefaultHasher::new();
         h.write(self.as_bytes());
         let n = h.finish() as usize;
         let sep = usize::MAX / totcap;

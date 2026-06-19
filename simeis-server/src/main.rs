@@ -1,8 +1,8 @@
 #![allow(unexpected_cfgs)]
 use std::thread::JoinHandle;
 
+use mea::mpsc::BoundedReceiver;
 use ntex::web;
-use tokio::sync::mpsc::Receiver;
 
 use simeis_data::{
     game::{Game, GameSignal},
@@ -15,7 +15,7 @@ pub type GameState = ntex::web::types::State<Game>;
 
 #[cfg(feature = "compio")]
 fn start_game_thread(
-    stop: Receiver<GameSignal>,
+    stop: BoundedReceiver<GameSignal>,
     sysrecv: SyslogRecv,
     data: Game,
 ) -> JoinHandle<()> {
@@ -29,7 +29,7 @@ fn start_game_thread(
 
 #[cfg(feature = "tokio")]
 fn start_game_thread(
-    stop: Receiver<GameSignal>,
+    stop: BoundedReceiver<GameSignal>,
     sysrecv: SyslogRecv,
     data: Game,
 ) -> JoinHandle<()> {
@@ -67,10 +67,10 @@ async fn main() -> std::io::Result<()> {
     let (gamethread, state) = Game::init(start_game_thread).await;
     let stop_chan = state.send_sig.clone();
 
-    let res = web::HttpServer::new(move || {
+    let res = web::HttpServer::new(async move || {
         let game_state = state.clone();
         web::App::new()
-            .wrap(web::middleware::Logger::default())
+            .middleware(web::middleware::Logger::default())
             .state(game_state)
             .configure(api::configure)
     })

@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use rand::Rng;
+use rand::RngExt;
 use serde::{Deserialize, Serialize};
 use strum::{EnumIter, EnumString, IntoStaticStr};
 
@@ -20,25 +20,25 @@ const ABASE_REQ: f64 = 7.5;
 // Because all resources of the same level have the same base price
 // The resource cost (in credits) should be the same whatever the unit is
 // As long as it's the same class (simple / advanced)
-pub fn get_simple_industry_resources_cost() -> f64 {
+pub const fn get_simple_industry_resources_cost() -> f64 {
     (SBASE_REQ * Resource::Hydrogen.base_price())
         + (SBASE_REQ * 0.2 * Resource::Oxygen.base_price())
         + (SBASE_REQ * 1.25 * Resource::Carbon.base_price())
         + (SBASE_REQ * 0.4 * Resource::Water.base_price())
 }
 
-pub fn get_advanced_industry_resources_cost() -> f64 {
+pub const fn get_advanced_industry_resources_cost() -> f64 {
     (ABASE_REQ * Resource::Carbon.base_price())
         + (ABASE_REQ * 0.4 * Resource::Oil.base_price())
         + (ABASE_REQ * 0.2 * Resource::Helium.base_price())
 }
 
-pub fn get_sbase_produce_base() -> f64 {
+pub const fn get_sbase_produce_base() -> f64 {
     let scost = get_simple_industry_resources_cost();
     scost / (1.05 * Resource::Fuel.base_price())
 }
 
-pub fn get_abase_produce_base() -> f64 {
+pub const fn get_abase_produce_base() -> f64 {
     let acost = get_advanced_industry_resources_cost();
     acost / (1.75 * Resource::Fuel.base_price())
 }
@@ -67,7 +67,7 @@ pub enum IndustryUnitType {
 
 impl IndustryUnitType {
     pub fn new_unit(self) -> IndustryUnit {
-        let unitid = rand::thread_rng().gen();
+        let unitid = rand::rng().random();
         IndustryUnit {
             id: unitid,
             operator: None,

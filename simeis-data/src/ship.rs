@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::RngExt;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
@@ -74,24 +74,24 @@ pub struct Ship {
 
 impl Ship {
     pub fn init_shipyard(position: SpaceCoord) -> Vec<Ship> {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         vec![
-            Ship::light(rng.gen(), position),
-            Ship::medium(rng.gen(), position),
-            Ship::heavy(rng.gen(), position),
+            Ship::light(rng.random(), position),
+            Ship::medium(rng.random(), position),
+            Ship::heavy(rng.random(), position),
         ]
     }
 
     pub fn random(position: SpaceCoord) -> Ship {
-        let mut rng = rand::thread_rng();
-        let cargo_cap = rng.gen_range(10.0..1000.0) as f64;
+        let mut rng = rand::rng();
+        let cargo_cap = rng.random_range(10.0..1000.0) as f64;
         Ship {
-            id: rng.gen(),
+            id: rng.random(),
             position,
-            reactor_power: rng.gen_range(1..10),
-            fuel_tank_capacity: rng.gen_range(1..10000) as f64,
+            reactor_power: rng.random_range(1..10),
+            fuel_tank_capacity: rng.random_range(1..10000) as f64,
             cargo: ShipCargo::with_capacity(cargo_cap),
-            hull_resistance: rng.gen_range(1000..50000) as f64,
+            hull_resistance: rng.random_range(1000..50000) as f64,
             ..Default::default()
         }
     }
@@ -330,11 +330,11 @@ impl Ship {
 #[test]
 fn test_ship_flight() {
     crate::tests::create_property_based_test(100000, &[], |rng| {
-        let (x, y, z) = (rng.gen(), rng.gen(), rng.gen());
+        let (x, y, z) = (rng.random(), rng.random(), rng.random());
         let mut ship = Ship::random((x, y, z));
         ship.fuel_tank = ship.fuel_tank_capacity;
 
-        let pilot_id = rng.gen();
+        let pilot_id = rng.random();
         ship.crew.0.insert(
             pilot_id,
             crate::crew::CrewMember::from(CrewMemberType::Pilot),
@@ -342,7 +342,7 @@ fn test_ship_flight() {
         ship.pilot = Some(pilot_id);
         ship.update_perf_stats();
 
-        let add = rng.gen_range(1..100);
+        let add = rng.random_range(1..100);
         let dest = (
             x.saturating_add(add),
             y.saturating_add(add),

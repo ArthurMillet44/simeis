@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use rand::rngs::ThreadRng;
-use rand::Rng;
+use rand::RngExt;
 
 pub mod planet;
 pub mod scan;
@@ -63,11 +63,11 @@ impl Galaxy {
         );
         let ind = self.discovered.len();
         self.discovered.push((secx, secy, secz));
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         for _ in 0..PLANETS_PER_SECTOR {
-            let x = rng.gen_range(secx.0..secx.1);
-            let y = rng.gen_range(secy.0..secy.1);
-            let z = rng.gen_range(secz.0..secz.1);
+            let x = rng.random_range(secx.0..secx.1);
+            let y = rng.random_range(secy.0..secy.1);
+            let z = rng.random_range(secz.0..secz.1);
             let planet = planet::Planet::random((x, y, z), &mut rng);
             if self
                 .insert(&(x, y, z), SpaceObject::Planet(Arc::new(planet)))
@@ -138,13 +138,13 @@ impl Galaxy {
 
     // TODO (#31) Generate based on the galaxy
     pub async fn init_new_station(&mut self) -> (StationId, Arc<Station>) {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
-        let mut seccoord = (rng.gen(), rng.gen(), rng.gen());
+        let mut seccoord = (rng.random(), rng.random(), rng.random());
         while self.is_discovered(&seccoord) {
-            seccoord = (rng.gen(), rng.gen(), rng.gen());
+            seccoord = (rng.random(), rng.random(), rng.random());
         }
-        let id = rng.gen();
+        let id = rng.random();
         let ind = self.generate_sector(&seccoord);
         let sector = self.discovered.get(ind).unwrap();
 
@@ -311,8 +311,8 @@ fn sectors_around(center: &SpaceCoord, radius: f64) -> Vec<GalaxySector> {
 }
 
 fn get_rand_coord_near(obj: &SpaceCoord, dist: f64, rng: &mut ThreadRng) -> SpaceCoord {
-    let theta = rng.gen_range(0.0..2.0 * std::f64::consts::PI); // azimuthal angle
-    let phi = rng.gen_range(0.0..std::f64::consts::PI); // polar angle
+    let theta = rng.random_range(0.0..2.0 * std::f64::consts::PI); // azimuthal angle
+    let phi = rng.random_range(0.0..std::f64::consts::PI); // polar angle
     let x = (obj.0 as f64) + (dist * phi.sin() * theta.cos());
     let y = (obj.1 as f64) + (dist * phi.sin() * theta.sin());
     let z = (obj.2 as f64) + (dist * phi.cos());
@@ -321,13 +321,11 @@ fn get_rand_coord_near(obj: &SpaceCoord, dist: f64, rng: &mut ThreadRng) -> Spac
 
 #[test]
 fn test_compute_sector() {
-    use rand::SeedableRng;
-
-    let mut rng = rand::rngs::SmallRng::from_entropy();
+    let mut rng: rand::rngs::SmallRng = rand::make_rng();
     for _ in 0..10000000 {
-        let x = rng.gen();
-        let y = rng.gen();
-        let z = rng.gen();
+        let x = rng.random();
+        let y = rng.random();
+        let z = rng.random();
         let sec = compute_sector(x, y, z);
         assert!(is_in_sector(&(x, y, z), &sec));
     }

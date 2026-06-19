@@ -1,9 +1,9 @@
-use rand::Rng;
+use mea::rwlock::RwLock;
+use rand::{Rng, RngExt};
 use rand_distr::{Distribution, Normal};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use strum::IntoEnumIterator;
-use tokio::sync::RwLock;
 
 use crate::{crew::CrewMember, ship::resources::Resource};
 
@@ -66,7 +66,7 @@ impl Market {
 
     pub async fn update_prices<R: Rng>(&self, rng: &mut R) {
         for (res, price) in self.prices.iter() {
-            if !rng.gen_bool(UPD_PRICE_PROBA) {
+            if !rng.random_bool(UPD_PRICE_PROBA) {
                 continue;
             }
             let mut price = price.write().await;

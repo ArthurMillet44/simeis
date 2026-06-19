@@ -10,15 +10,10 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 - **Cache Rust**: remplacement de `Swatinem/rust-cache@v2` par `actions/cache@v4` dans tous les workflows pour une gestion manuelle du cache
 - **Build Rust multi-OS** (`.github/workflows/rust-ci.yml`)
   - Ajout d'une matrice de build sur le job `build` pour compiler le projet sur `macos-latest`, `ubuntu-latest` et `windows-latest`
-  - La matrice teste les versions Rust `1.75.0`, `1.80.0`, `1.85.0` et `1.88.0`
+  - La matrice teste uniquement Rust `1.88.0`
   - Les clés de cache Cargo utilisent l'OS du runner, le fichier `Cargo.lock` et les fichiers Rust racine
 - **Runtime serveur par défaut** (`simeis-server/Cargo.toml`)
-  - Remplacement du runtime par défaut `compio` par `tokio` pour garder le build compatible avec les anciennes versions Rust de la matrice CI
-- **Compatibilité Rust 1.75**
-  - Remplacement de `mea` par `tokio::sync`, car `mea` demande au minimum Rust 1.80
-  - Verrouillage de dépendances sur des versions compatibles avec Rust 1.75, notamment `ntex 2.12.0`, `rand 0.8.5`, `rand_distr 0.4.3` et `tokio 1.36.0`
-  - Adaptation du code aux APIs `rand 0.8` et `ntex 2.12`
-  - Remplacement de constructions Rust trop récentes pour Rust 1.75 (`const fn` avec calculs flottants et `inline const`)
+  - Remplacement du runtime par défaut `compio` par `tokio`
 - **Suppression de dépendances inutilisées** :
   - `env_logger` retiré de `simeis-data`
   - `urlencoding` retiré de `simeis-server`

@@ -1,9 +1,9 @@
 use std::collections::BTreeMap;
 use std::sync::Arc;
 
-use rand::Rng;
+use mea::rwlock::RwLock;
+use rand::RngExt;
 use serde::{Deserialize, Serialize};
-use tokio::sync::RwLock;
 
 use crate::crew::{Crew, CrewId, CrewMember, CrewMemberType};
 use crate::errors::Errcode;
@@ -479,7 +479,7 @@ impl Station {
     }
 
     pub async fn hire_crew(&self, id: &PlayerId, crewtype: CrewMemberType) -> CrewId {
-        let crewid = rand::thread_rng().gen();
+        let crewid = rand::rng().random();
         let member = CrewMember::from(crewtype);
 
         self.ensure_has_player_data(id).await;

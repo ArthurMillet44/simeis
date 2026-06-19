@@ -1,3 +1,4 @@
+use rand::RngExt;
 use serde::{Deserialize, Serialize};
 
 use crate::ship::resources::Resource;
@@ -32,8 +33,8 @@ pub struct Planet {
 impl Planet {
     pub fn random<R: rand::Rng>(coord: SpaceCoord, rng: &mut R) -> Planet {
         Planet {
-            solid: rng.gen_bool(0.4),
-            temperature: rng.gen(),
+            solid: rng.random_bool(0.4),
+            temperature: rng.random(),
             position: coord,
         }
     }
