@@ -14,6 +14,8 @@ DIRS_TO_EXCLUDE = ["--exclude-dir=scripts"]
 # État d'une issue fermée sur GitHub
 ISSUE_CLOSED = "CLOSED"
 
+print(subprocess.run(["gh", "repo", "view", "--json", "nameWithOwner", "--jq", ".nameWithOwner"], capture_output=True, text=True).stdout.strip())
+
 
 def find_todos():
     # Cherche récursivement tous les TODOs dans les fichiers Rust et Python
