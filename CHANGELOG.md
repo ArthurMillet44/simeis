@@ -8,6 +8,12 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 - **Workflow qualité de code** (`.github/workflows/check-code-quality.yml`)
   - Le workflow se déclenche désormais sur toutes les pull requests, quelle que soit la branche cible (auparavant limité aux PRs vers `main`)
 - **Cache Rust**: remplacement de `Swatinem/rust-cache@v2` par `actions/cache@v4` dans tous les workflows pour une gestion manuelle du cache
+- **Build Rust multi-OS** (`.github/workflows/rust-ci.yml`)
+  - Ajout d'une matrice de build sur le job `build` pour compiler le projet sur `macos-latest`, `ubuntu-latest` et `windows-latest`
+  - La matrice teste uniquement Rust `1.88.0`
+  - Les clés de cache Cargo utilisent l'OS du runner, le fichier `Cargo.lock` et les fichiers Rust racine
+- **Runtime serveur par défaut** (`simeis-server/Cargo.toml`)
+  - Remplacement du runtime par défaut `compio` par `tokio`
 - **Suppression de dépendances inutilisées** :
   - `env_logger` retiré de `simeis-data`
   - `urlencoding` retiré de `simeis-server`
