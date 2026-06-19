@@ -181,6 +181,8 @@ impl Game {
     }
 }
 
+// TODO test
+
 fn main() {
     let name = std::env::args()
         .nth(1)
