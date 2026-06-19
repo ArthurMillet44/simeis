@@ -1,9 +1,9 @@
 use rand::Rng;
 use rand_distr::{Distribution, Normal};
-use tokio::sync::RwLock;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use strum::IntoEnumIterator;
+use tokio::sync::RwLock;
 
 use crate::{crew::CrewMember, ship::resources::Resource};
 

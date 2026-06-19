@@ -1,8 +1,8 @@
 #![allow(clippy::type_complexity)]
+use std::sync::Arc;
 use tokio::sync::mpsc::error::TryRecvError;
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::sync::{Mutex, RwLock};
-use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
 use strum::IntoStaticStr;
