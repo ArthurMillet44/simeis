@@ -31,6 +31,16 @@ jobs:
 
           # TARGETS contient une liste de branche cible
 
+          TARGETS=$(gh pr view $PR_NUMBER --json labels \
+            --jq '.labels[].name | select(startswith("propagate:")) | ltrimstr("propagate:")')
+
+          echo "Labels propagate détectés : '$TARGETS'"
+
+          if [ -z "$TARGETS" ]; then
+            echo "Aucun label propagate:* trouvé, rien à faire."
+            exit 0
+          fi
+
           for TARGET in $TARGETS; do
             gh pr create \
               --base "$TARGET" \
