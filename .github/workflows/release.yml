@@ -6,12 +6,52 @@ on:
       - release/*
     types:
       - closed
+env:
+  TAG: simeis-server:1.0
 
 jobs:
+  docker:
+    runs-on: ubuntu-latest 
+    steps:
+      - name: Checkou
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build docker image
+        run: docker build -f .github/Dockerfile -t ${{ env.TAG }} .
+
+      - name: Test
+        run: |
+          docker run -d --rm --name simeis-server-test ${{ env.TAG }}
+          sleep 10
+          docker inspect simeis-server-test --format='{{.State.Running}}'
+          docker stop simeis-server-test
+      
+      - name: Save image to tar
+        run: docker save ${{ env.TAG }} > simeis-server.tar
+      
+      - name: Save artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: simeis-server
+          path: simeis-server.tar
+        
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.TAG }}
   main:
     if: >
       github.event.pull_request.merged == true &&
       startsWith(github.event.pull_request.base.ref, 'release/')
+    needs: docker
     name: Create/Update Release
     runs-on: ubuntu-latest
     steps:
@@ -44,8 +84,18 @@ jobs:
           VERSION=${GITHUB_BASE_REF#release/}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
+      - name: Build release artifacts
+        run: |
+          make release
+          make manual
+      
+      - name: Download artifact image
+        uses: actions/download-artifact@v4
+        with:
+          name: simeis-server
+
       - name: Create or update GitHub Release
-        uses: github/create-update-github-release@v2
+        uses: softprops/action-gh-release@v2
         with:
           tag: ${{ env.VERSION }}
           name: "Release ${{ env.VERSION }}"
@@ -58,6 +108,7 @@ jobs:
             doc/manual.pdf
             doc/swagger.json
             doc/swagger-ui.html
+            simeis-server.tar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       

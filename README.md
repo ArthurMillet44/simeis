@@ -19,3 +19,17 @@ Le développement suit une convention de branches (`feature/*`, `bug/*`, `releas
 ## Worflows
 
 Les différents workflows de ci sont expliqués dans le fichier [.github/workflows/README.md](.github/workflows/README.md).
+
+### Build Rust multi-OS
+
+Le workflow Rust CI (`.github/workflows/rust-ci.yml`) utilise une matrice de build pour vérifier que le projet compile en mode release sur plusieurs systèmes d'exploitation :
+
+- `macos-latest`
+- `ubuntu-latest`
+- `windows-latest`
+
+Le build est testé avec Rust `1.88.0`.
+
+Cette matrice permet de détecter plus rapidement les problèmes spécifiques à un OS, par exemple des chemins de fichiers ou des commandes incompatibles entre Linux, Windows et macOS.
+
+Le serveur utilise `tokio` comme runtime par défaut. Le runtime `compio` reste disponible via la feature Cargo `compio`, mais il n'est pas activé par défaut.

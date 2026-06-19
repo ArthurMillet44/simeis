@@ -7,10 +7,35 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 ### Changed
 - **Workflow qualité de code** (`.github/workflows/check-code-quality.yml`)
   - Le workflow se déclenche désormais sur toutes les pull requests, quelle que soit la branche cible (auparavant limité aux PRs vers `main`)
-  - Ajout d'un cache des dépendances Rust via `Swatinem/rust-cache@v2` pour accélérer les builds suivants
-- Ajout d'un cache partagé entre les pull requests
+- **Cache Rust**: remplacement de `Swatinem/rust-cache@v2` par `actions/cache@v4` dans tous les workflows pour une gestion manuelle du cache
+- **Build Rust multi-OS** (`.github/workflows/rust-ci.yml`)
+  - Ajout d'une matrice de build sur le job `build` pour compiler le projet sur `macos-latest`, `ubuntu-latest` et `windows-latest`
+  - La matrice teste uniquement Rust `1.88.0`
+  - Les clés de cache Cargo utilisent l'OS du runner, le fichier `Cargo.lock` et les fichiers Rust racine
+- **Runtime serveur par défaut** (`simeis-server/Cargo.toml`)
+  - Remplacement du runtime par défaut `compio` par `tokio`
+- **Suppression de dépendances inutilisées** :
+  - `env_logger` retiré de `simeis-data`
+  - `urlencoding` retiré de `simeis-server`
 
 ### Added
+- **Workflow d'analyse avancée du code** (`.github/workflows/advanced-code-analysis.yml`)
+  - Déclenché sur les pull requests ciblant une branche `release/*`
+  - Tests unitaires avec la feature `heavy-testing`
+  - Compilation du serveur en mode debug avec la feature `heavy-testing`
+  - Squelette d'un script de tests fonctionnels lourds (`tests/heavy_tests.py`)
+  - Audit de sécurité des dépendances via `cargo-audit`
+  - Détection des dépendances inutilisées via `cargo-udeps`
+- **Workflow de vérification des TODOs** (`.github/workflows/check-todos.yml`)
+  - Vérifie que chaque TODO référence une issue ouverte au format `TODO (#numéro)`
+  - Échoue si l'issue est absente, inexistante ou fermée
+  - Logique implémentée dans `scripts/check_todos.py`
+- **Workflow de propagation des branches bug** (`.github/workflows/bug-branch-analysis.yml`)
+  - Se déclenche au merge d'une PR depuis une branche `bug/*`
+  - Crée automatiquement une PR vers chaque branche `release/x` indiquée par un label `propagate:release/x`
+- **Feature `heavy-testing`** dans `simeis-data` et `simeis-server`
+  - Feature Cargo vide pour l'instant, destinée à activer les tests lourds dans le workflow d'analyse avancée
+
 - **Workflows de dépendances**
   - Ajout d'un workflow `.github/workflows/dependencies.yml` pour mettre à jour automatiquement les dépendances Rust chaque semaine et créer une pull request si des modifications apparaissent.
 - **CODEOWNERS**

@@ -1,0 +1,62 @@
+name: Advanced code analysis
+
+on:
+  pull_request:
+    branches:
+      - 'release/**'
+
+jobs:
+  analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installation de la toolchain Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache des dépendances Rust
+        uses: actions/cache@v4
+        with:
+          # Dossiers à mettre en cache :
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin
+            target/
+          # Clé unique qui identifie ce cache. Si le Cargo.lock change alors le hash change et un nouveau cache est créé.
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}${{ hashFiles('**/*.rs') }}
+          restore-keys: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Lancement des tests avec la feature heavy-testing
+        run: cargo test --features heavy-testing
+
+      - name: Compilation en mode debug avec la feature heavy-testing
+        run: cargo build -p simeis-server --features heavy-testing
+
+      - name: Installation de Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Lancement du script de tests fonctionnels heavy
+        run: python tests/heavy_tests.py
+
+      # cargo-binstall télécharge des binaires pré-compilés au lieu de les recompiler.
+      - name: Installation de cargo-binstall
+        uses: cargo-bins/cargo-binstall@main
+
+      - name: Installation de cargo-audit et cargo-udeps via binstall
+        run: cargo binstall cargo-audit cargo-udeps --no-confirm
+
+      # Vérifie que les dépendances ne contiennent pas de vulnérabilités connues (CVE).
+      - name: cargo audit
+        run: cargo audit
+
+      # cargo-udeps a besoin de nightly pour analyser les dépendances inutilisées.
+      - name: Installation de la toolchain nightly (pour cargo-udeps)
+        uses: dtolnay/rust-toolchain@nightly
+
+      # Vérifie qu'aucune dépendance déclarée dans Cargo.toml n'est inutilisée.
+      - name: cargo udeps
+        run: cargo +nightly udeps --all-targets
