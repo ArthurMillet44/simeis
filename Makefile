@@ -10,7 +10,7 @@ release:
 ifeq ($(OS),Windows_NT)
 	@echo "Skipping strip on Windows"
 else
-	strip target/release/simeis
+	strip target/release/simeis-server
 endif
 
 clean:

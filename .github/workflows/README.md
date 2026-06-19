@@ -114,4 +114,17 @@ Ce workflow se déclenche lorsqu'une PR dont la branche source est `bug/*` est m
 
 Ce workflow vérifie la couverture de code grâce à l'outil `cargo-tarpaulin`. 
 Il ce déclenche sur chaque pull request. Si la couverture est inférieur à 50%, un label `not enough tests` est ajouté sur la pull
-request.
+
+## Release (`release.yml`)
+
+Le fichier [.github/workflows/release.yml](.github/workflows/release.yml) gère la création et la mise à jour d'une Release GitHub lorsqu'une Pull Request est mergée vers une branche `release/*`.
+
+- Déclencheur : `pull_request` de type `closed` ciblant `release/*`, avec une condition supplémentaire `github.event.pull_request.merged == true`.
+- Récupération de la version : extraction de la partie après `release/` depuis la branche cible et stockage dans `VERSION`.
+- Étapes de build : checkout du dépôt, installation de la toolchain Rust, exécution de `make release` et `make manual` pour produire le binaire et le manuel PDF.
+- Publication : utilisation de `github/create-update-github-release@v2` pour créer ou mettre à jour la Release. Le workflow publie les artefacts importants suivants :
+  - `target/release/simeis` (binaire release)
+  - `dist/*.deb` (packages Debian)
+  - `doc/manual.pdf` (manuel PDF)
+  - `doc/swagger.json` et `doc/swagger-ui.html` (spécification OpenAPI et UI)
+- Génération automatique du `CHANGELOG.md` pour les PR mergées dans la release

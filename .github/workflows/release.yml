@@ -58,13 +58,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Build release
+        run: make release
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Debian packaging tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y debhelper dpkg-dev build-essential fakeroot
+
+      - name: Prepare Debian maintainer scripts
+        run: chmod +x debian/rules debian/simeis.postinst debian/simeis.prerm
+
+      - name: Build Debian package
+        env:
+          DEB_BUILD_OPTIONS: nocheck
+        run: |
+          export PATH="$PATH:/home/runner/.cargo/bin"
+          dpkg-buildpackage -us -uc -b -d
+
       - name: Get version
         run: |
           VERSION=${GITHUB_BASE_REF#release/}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
 
       - name: Build release artifacts
         run: |
@@ -85,7 +103,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            target/release/simeis
+            target/release/simeis-server
             dist/*.deb
             doc/manual.pdf
             doc/swagger.json

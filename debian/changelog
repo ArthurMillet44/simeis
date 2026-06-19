@@ -1,0 +1,6 @@
+simeis (0.2.0) unstable; urgency=low
+
+  * Init du package Debian
+  * Service, manuel et scripts d'installation
+
+ -- Bryan Métro <bryanmetro@outlook..fr>  Fri, 19 Jun 2026 15:00:00 +0200

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+useradd --system simeis || true
+
+systemctl daemon-reload
+systemctl enable simeis
+systemctl start simeis
