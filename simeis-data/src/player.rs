@@ -4,7 +4,7 @@ use std::hash::Hasher;
 use std::sync::Arc;
 use std::time::Instant;
 
-use rand::Rng;
+use rand::RngCore;
 
 use crate::crew::CrewId;
 use crate::errors::Errcode;
@@ -40,7 +40,7 @@ impl Player {
     pub fn new(initstation: (StationId, Arc<Station>), name: String) -> Player {
         let mut hasher = DefaultHasher::new();
         hasher.write(name.as_bytes());
-        let mut rng = rand::rng();
+        let mut rng = rand::thread_rng();
         let mut randbytes = [0; 128];
         rng.fill_bytes(&mut randbytes);
 

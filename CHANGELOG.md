@@ -14,6 +14,11 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
   - Les clés de cache Cargo utilisent l'OS du runner, le fichier `Cargo.lock` et les fichiers Rust racine
 - **Runtime serveur par défaut** (`simeis-server/Cargo.toml`)
   - Remplacement du runtime par défaut `compio` par `tokio` pour garder le build compatible avec les anciennes versions Rust de la matrice CI
+- **Compatibilité Rust 1.75**
+  - Remplacement de `mea` par `tokio::sync`, car `mea` demande au minimum Rust 1.80
+  - Verrouillage de dépendances sur des versions compatibles avec Rust 1.75, notamment `ntex 2.12.0`, `rand 0.8.5`, `rand_distr 0.4.3` et `tokio 1.36.0`
+  - Adaptation du code aux APIs `rand 0.8` et `ntex 2.12`
+  - Remplacement de constructions Rust trop récentes pour Rust 1.75 (`const fn` avec calculs flottants et `inline const`)
 - **Suppression de dépendances inutilisées** :
   - `env_logger` retiré de `simeis-data`
   - `urlencoding` retiré de `simeis-server`

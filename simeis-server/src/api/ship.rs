@@ -203,7 +203,7 @@ async fn unload_ship_cargo(
         })
         .await;
 
-    if let Ok(0.0) = data {
+    if data.as_ref().is_ok_and(|unloaded| *unloaded == 0.0) {
         let (pid, ev) = srv
             .map_ship_in_station(&pkey, &station_id, &ship_id, |pid, station, ship| {
                 Box::pin(async move {

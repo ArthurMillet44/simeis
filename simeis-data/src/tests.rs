@@ -1,12 +1,12 @@
-use rand::{rngs::SmallRng, RngExt, SeedableRng};
+use rand::{rngs::SmallRng, Rng, SeedableRng};
 
 pub fn create_property_based_test<T: Fn(&mut SmallRng)>(niter: usize, reg: &[u64], f: T) {
-    let mut seed_rng = rand::rng();
+    let mut seed_rng = rand::thread_rng();
     for i in 0..niter {
         let seed = if let Some(seed) = reg.get(i) {
             *seed
         } else {
-            seed_rng.random()
+            seed_rng.gen()
         };
 
         let mut rng = SmallRng::seed_from_u64(seed);

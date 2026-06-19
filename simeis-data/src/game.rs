@@ -12,14 +12,12 @@
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use mea::mpsc::{BoundedReceiver, BoundedSender, RecvError};
-use mea::rwlock::RwLock;
-
-#[cfg(not(feature = "testing"))]
-use mea::mpsc::TryRecvError;
+use tokio::sync::mpsc::error::TryRecvError;
+use tokio::sync::mpsc::{Receiver, Sender};
+use tokio::sync::RwLock;
 
 use base64::{prelude::BASE64_STANDARD, Engine};
-use rand::{Rng, RngExt};
+use rand::{Rng, SeedableRng};
 
 use crate::errors::Errcode;
 use crate::galaxy::scan::ScanResult;
@@ -59,15 +57,15 @@ pub struct Game {
     pub syslog: SyslogSend,
     pub fifo_events: SyslogFifo,
     pub tstart: f64,
-    pub send_sig: BoundedSender<GameSignal>,
+    pub send_sig: Sender<GameSignal>,
 }
 
 impl Game {
     pub async fn init<F>(handle_thread: F) -> (std::thread::JoinHandle<()>, Game)
     where
-        F: FnOnce(BoundedReceiver<GameSignal>, SyslogRecv, Game) -> std::thread::JoinHandle<()>,
+        F: FnOnce(Receiver<GameSignal>, SyslogRecv, Game) -> std::thread::JoinHandle<()>,
     {
-        let (send_stop, recv_stop) = mea::mpsc::bounded(5);
+        let (send_stop, recv_stop) = tokio::sync::mpsc::channel(5);
         let (syssend, sysrecv) = SyslogSend::channel();
         let tstart = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
@@ -94,16 +92,16 @@ impl Game {
     }
 
     #[allow(unused_variables, unused_mut)]
-    pub async fn start(&self, mut stop: BoundedReceiver<GameSignal>, syslog: SyslogRecv) {
+    pub async fn start(&self, mut stop: Receiver<GameSignal>, syslog: SyslogRecv) {
         log::info!("Game thread started");
         let sleepmin_iter = ITER_PERIOD;
         let mut last_iter = Instant::now();
         let mut market_last_tick = Instant::now();
-        let mut rng: rand::rngs::SmallRng = rand::make_rng();
+        let mut rng = rand::rngs::SmallRng::from_entropy();
 
         'main: loop {
             #[cfg(feature = "testing")]
-            let got = stop.recv().await;
+            let got = stop.recv().await.ok_or(TryRecvError::Disconnected);
 
             #[cfg(not(feature = "testing"))]
             let got = match stop.try_recv() {
@@ -111,7 +109,7 @@ impl Game {
                 Err(TryRecvError::Empty) => Ok(GameSignal::Tick),
                 Err(TryRecvError::Disconnected) => {
                     log::error!("Can't get next tick / stop signal: disconnected");
-                    Err(RecvError::Disconnected)
+                    Err(TryRecvError::Disconnected)
                 }
             };
 
@@ -130,10 +128,11 @@ impl Game {
                 }
 
                 Ok(GameSignal::Stop) => break 'main,
-                Err(RecvError::Disconnected) => {
+                Err(TryRecvError::Disconnected) => {
                     log::error!("Got disconnected channel in game thread");
                     break 'main;
                 }
+                Err(TryRecvError::Empty) => continue 'main,
             }
         }
         log::info!("Exiting game thread");
@@ -191,7 +190,7 @@ impl Game {
             }
         }
 
-        if rng.random_bool(market_change_proba) {
+        if rng.gen_bool(market_change_proba) {
             #[cfg(not(feature = "testing"))]
             self.market.update_prices(rng).await;
             *mlt = Instant::now();

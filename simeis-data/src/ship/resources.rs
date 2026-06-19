@@ -53,7 +53,7 @@ impl Resource {
 
     // TODO (#12) Get from configuration file
     #[inline]
-    pub const fn base_price(&self) -> f64 {
+    pub fn base_price(&self) -> f64 {
         let base = 4.0;
         match self {
             Resource::Carbon | Resource::Hydrogen | Resource::Water => base,
