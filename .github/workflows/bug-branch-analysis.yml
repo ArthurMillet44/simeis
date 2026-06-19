@@ -1,0 +1,13 @@
+name: Bug branch analysis
+#test
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  analysis:
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'bug/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
